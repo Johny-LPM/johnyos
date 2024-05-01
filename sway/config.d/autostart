@@ -1,0 +1,9 @@
+# Startup executions, add scripts, applications, etc
+
+# GNOME Policy Kit (don't mess with this)
+exec /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
+
+# Notifications Daemon (or this probably)
+exec dunst
+
+# Custom (add your entries here)

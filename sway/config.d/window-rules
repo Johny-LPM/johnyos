@@ -1,0 +1,2 @@
+# Window rules (e.g. it's should be floating or not)
+for_window [app_id="pavucontrol"] floating enable
