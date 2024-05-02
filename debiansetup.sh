@@ -1,9 +1,35 @@
 #!/usr/bin/env bash
 
+setupname="debiansetup.sh"
+
 # Superuser authentication
 echo "Initial authentication required!"
 sudo echo "Thank you!"
 
+
+kstat=$(cat $(pwd)/kstat)
+if [ "$kstat" == "updated" ]; then
+    echo "Great! Seems like you already have the updated kernel, $(uname -r), we can proceed!"
+    sleep 2
+    rm $(pwd)/kstat
+    sed -i '$d' $HOME/.bashrc
+
+else
+    echo "Stay with me a sec, I'll update your kernel and then reboot and continue, be ready to login when we get back!"
+    sleep 2
+    sudo apt install lsb-release software-properties-common apt-transport-https ca-certificates curl -y
+
+    curl -fSsL https://pkgs.zabbly.com/key.asc | gpg --dearmor | sudo tee /usr/share/keyrings/linux-zabbly.gpg > /dev/null
+    codename=$(lsb_release -sc 2>/dev/null) && echo deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/linux-zabbly.gpg] https://pkgs.zabbly.com/kernel/stable $codename main | sudo tee /etc/apt/sources.list.d/linux-zabbly.list
+
+    sudo apt update -y
+    sudo apt install linux-zabbly -y
+
+    echo "updated">$(pwd)/kstat
+    echo $(pwd)/$setupname >> $HOME/.bashrc
+    sudo reboot
+    exit 1
+fi
 
 # Initial update
 sudo apt update -y
@@ -52,7 +78,7 @@ sudo apt install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst
 xdg-user-dirs-update
 
 # Utils for average use (some are included in other sections)
-sudo apt install wlr-randr brightnessctl qt5ct qt6ct mesa-utils pciutils unrar unzip blueman synaptic timeshift kcalc connman-gtk -y
+sudo apt install wlr-randr brightnessctl qt5ct qt6ct mesa-utils pciutils unrar unzip blueman synaptic timeshift kcalc connman-gtk tlp tlp-rdw tldr -y
 
 
 # Aesthetic
@@ -84,6 +110,7 @@ distrobox-create archlinux --image docker.io/library/archlinux:latest
 #sudo apt install thunar fileroller -y
 #flatpak install com.google.Chrome -y
 flatpak install org.onlyoffice.desktopeditors -y
+flatpak install com.github.d4nj1.tlpui -y
 
 
 # Optional (my personal configuration)
@@ -108,6 +135,7 @@ echo 'eval "$(zoxide init bash)"' >> $HOME/.bashrc
 if lspci | grep -i nvidia > /dev/null; then
 
     echo "It appears you have an NVIDIA GPU. I'll be taking some extra steps for your convenience! If you know what you're doing, you can cancel this step with Ctrl+C and reboot on your own, there's nothing else left to do."
+    sleep 2
 
     sudo apt install software-properties-common -y
     sudo add-apt-repository contrib non-free-firmware

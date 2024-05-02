@@ -1,5 +1,7 @@
-# Includes other configuration files, for segregation and ease of reading
+# Includes other configuration files, for segregation and ease of reading (best not to touch this)
+include /etc/sway/config.d/*
 include $HOME/.config/sway/config.d/*
+
 
 # Fix GTK Issue
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
