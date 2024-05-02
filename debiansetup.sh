@@ -6,17 +6,16 @@ setupname="debiansetup.sh"
 echo "Initial authentication required!"
 sudo echo "Thank you!"
 
-
-kstat=$(cat $(pwd)/kstat)
-if [ "$kstat" == "updated" ]; then
+kstat=$HOME/kstat
+if [ "$(cat $kstat)" == "updated" ]; then
     echo "Great! Seems like you already have the updated kernel, $(uname -r), we can proceed!"
-    sleep 2
-    rm $(pwd)/kstat
+    sleep 5
+    rm $kstat
     sed -i '$d' $HOME/.bashrc
 
 else
     echo "Stay with me a sec, I'll update your kernel and then reboot and continue, be ready to login when we get back!"
-    sleep 2
+    sleep 5
     sudo apt install lsb-release software-properties-common apt-transport-https ca-certificates curl -y
 
     curl -fSsL https://pkgs.zabbly.com/key.asc | gpg --dearmor | sudo tee /usr/share/keyrings/linux-zabbly.gpg > /dev/null
@@ -27,6 +26,9 @@ else
 
     echo "updated">$(pwd)/kstat
     echo $(pwd)/$setupname >> $HOME/.bashrc
+    clear
+    echo "I'll reboot it now, be ready to login when I come back!"
+    sleep 5
     sudo reboot
     exit 1
 fi
@@ -78,7 +80,7 @@ sudo apt install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst
 xdg-user-dirs-update
 
 # Utils for average use (some are included in other sections)
-sudo apt install wlr-randr brightnessctl qt5ct qt6ct mesa-utils pciutils unrar unzip blueman synaptic timeshift kcalc connman-gtk tlp tlp-rdw tldr -y
+sudo apt install wlr-randr brightnessctl qt5ct qt6ct mesa-utils pciutils unrar unzip blueman network-manager synaptic timeshift kcalc tlp tlp-rdw tldr -y
 
 
 # Aesthetic
