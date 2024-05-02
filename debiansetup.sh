@@ -80,7 +80,7 @@ sudo apt install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst
 xdg-user-dirs-update
 
 # Utils for average use (some are included in other sections)
-sudo apt install wlr-randr brightnessctl qt5ct qt6ct mesa-utils pciutils unrar unzip blueman network-manager synaptic timeshift kcalc tlp tlp-rdw tldr -y
+sudo apt install wlr-randr brightnessctl qt5ct qt6ct mesa-utils pciutils unrar unzip blueman network-manager network-manager-gnome synaptic timeshift kcalc tlp tlp-rdw tldr -y
 
 
 # Aesthetic
