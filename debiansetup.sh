@@ -45,8 +45,11 @@ sudo apt install pipewire wireplumber pulseaudio-utils pavucontrol pamixer gnome
 
 # Sway
 cp -r ./sway/ $HOME/.config/
-sudo apt install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst libnotify-dev -y
+sudo apt install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst libnotify-bin libnotify-dev -y
 
+
+# Add User directories
+xdg-user-dirs-update
 
 # Utils for average use (some are included in other sections)
 sudo apt install wlr-randr brightnessctl qt5ct qt6ct mesa-utils pciutils unrar unzip blueman synaptic timeshift kcalc connman-gtk -y
