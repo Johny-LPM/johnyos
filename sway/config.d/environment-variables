@@ -1,8 +1,0 @@
-# Variables added here should serve some purpose
-
-# Sets Firefox (and derivatives) to use Wayland and sets up Qt theming
-export MOZ_ENABLE_WAYLAND=1
-export QT_QPA_PLATFORM=wayland
-export QT_QPA_PLATFORMTHEME=qt5ct
-
-# Custom (add your entries here)

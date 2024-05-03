@@ -1,39 +1,8 @@
 #!/usr/bin/env bash
 
-setupname="debiansetup.sh"
-
 # Superuser authentication
 echo "Initial authentication required!"
 sudo echo "Thank you!"
-
-kstat=$HOME/kstat
-if [ "$(cat $kstat)" == "updated" ]; then
-    echo "Great! Seems like you already have the updated kernel, $(uname -r), we can proceed!"
-    sleep 5
-    rm $kstat
-    sed -i '$d' $HOME/.bashrc
-
-else
-    echo "Stay with me a sec, I'll update your kernel and then reboot and continue, be ready to login when we get back!"
-    sleep 5
-    sudo apt install lsb-release software-properties-common apt-transport-https ca-certificates curl -y
-
-    curl -fSsL https://pkgs.zabbly.com/key.asc | gpg --dearmor | sudo tee /usr/share/keyrings/linux-zabbly.gpg > /dev/null
-    codename=$(lsb_release -sc 2>/dev/null) && echo deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/linux-zabbly.gpg] https://pkgs.zabbly.com/kernel/stable $codename main | sudo tee /etc/apt/sources.list.d/linux-zabbly.list
-
-    sudo apt update -y
-    sudo apt install linux-zabbly -y
-
-    echo "updated">$(pwd)/kstat
-    echo $(pwd)/$setupname >> $HOME/.bashrc
-    clear
-    echo "I'll reboot it now, be ready to login when I come back!"
-    sleep 5
-    sudo reboot
-    exit 1
-fi
-
-# Initial update
 sudo apt update -y
 sudo apt upgrade -y
 
@@ -46,8 +15,79 @@ sudo set -i 's/#ALGO=lz4/ALGO=lz4/g' /etc/default/zramswap
 sudo systemctl restart zramswap
 
 
+# Checks for updated kernel, if it isn't proceeds to install Zabbly's kernel
+if [ "$(cat $0.kstat)" == "updated" ]; then
+    echo "Great! Seems like you already have the updated kernel, $(uname -r), we can proceed!"
+    sleep 5
+    rm $0.kstat
+
+else
+    echo "Stay with me a sec, I'll update your kernel and then reboot and continue, be ready to login when we get back!"
+    sleep 5
+    sudo apt install lsb-release software-properties-common apt-transport-https ca-certificates curl -y
+
+    curl -fSsL https://pkgs.zabbly.com/key.asc | gpg --dearmor | sudo tee /usr/share/keyrings/linux-zabbly.gpg > /dev/null
+    codename=$(lsb_release -sc 2>/dev/null) && echo deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/linux-zabbly.gpg] https://pkgs.zabbly.com/kernel/stable $codename main | sudo tee /etc/apt/sources.list.d/linux-zabbly.list
+
+    sudo apt update -y
+    sudo apt install linux-zabbly -y
+
+    echo "updated">$0.kstat
+
+    # Add this script to autostart
+    if sudo echo "[Desktop Entry]\nName=DebianSetup\nExec=$0\nType=Application" > /etc/xdg/autostart/debiansetup.desktop; then
+    else
+        echo "Something went wrong when setting this script to autostart next boot!"
+        read nothing
+    fi
+    chmod +x /etc/xdg/autostart/debiansetup.desktop
+
+    clear
+    echo "I'll reboot it now, be ready to login when I come back!"
+    sleep 4
+    sudo reboot
+    exit 1
+fi
+
+
+# If an NVIDIA GPU is detected, sets up the NVIDIA Driver
+if lspci | grep -i nvidia > /dev/null; then
+    if nvidia-smi; then
+        echo "You've got the up to date NVIDIA drivers, alrighty!"
+        sleep 4
+    else
+        echo "It appears you have an NVIDIA GPU. I'll be taking some extra steps for your convenience!"
+        sleep 4
+
+        sudo apt install software-properties-common -y
+        sudo add-apt-repository contrib non-free-firmware
+        sudo apt install dirmngr ca-certificates apt-transport-https dkms curl -y
+
+        curl -fSsL https://developer.download.nvidia.com/compute/cuda/repos/debian"$(lsb_release -sr 2>/dev/null)"/x86_64/3bf863cc.pub | sudo gpg --dearmor | sudo tee /usr/share/keyrings/nvidia-drivers.gpg > /dev/null 2>&1
+
+        echo "deb [signed-by=/usr/share/keyrings/nvidia-drivers.gpg] https://developer.download.nvidia.com/compute/cuda/repos/debian$(lsb_release -sr 2>/dev/null)/x86_64/ /" | sudo tee /etc/apt/sources.list.d/nvidia-drivers.list
+
+        sudo apt update -y
+        sudo apt install nvidia-driver nvidia-smi nvidia-settings -y
+
+        if sudo echo -e "[Desktop Entry]\nName=Sway (NVIDIA)\nExec=sway --unsupported-gpu\nType=Application" > /usr/share/wayland-sessions/swaynvidia.desktop; then
+        else
+            echo "Something went wrong with adding sway to the session!"
+            read nothing
+        chmod +x /usr/share/wayland-sessions/swaynvidia.desktop
+
+else
+    echo "It seems you don't have an NVIDIA GPU. Good for you!"
+    sleep 5
+fi
+
+
+# Remove from autostart
+rm /etc/xdg/autostart/debiansetup.desktop
+
+
 # Policy Kit (required for some things, better keep)
-sudo apt install policykit-1-gnome -y
+sudo apt install policykit-1 policykit-1-gnome -y
 
 
 # Login Manager installation (SDDM)
@@ -72,7 +112,8 @@ sudo apt install pipewire wireplumber pulseaudio-utils pavucontrol pamixer gnome
 
 
 # Sway
-cp -r ./sway/ $HOME/.config/
+mkdir -p $HOME/.config/sway
+cp $(dirname $0)/sway/*  $HOME/.config/sway/*
 sudo apt install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst libnotify-bin libnotify-dev -y
 
 
@@ -81,6 +122,7 @@ xdg-user-dirs-update
 
 # Utils for average use (some are included in other sections)
 sudo apt install wlr-randr brightnessctl qt5ct qt6ct mesa-utils pciutils unrar unzip blueman network-manager network-manager-gnome synaptic timeshift kcalc tlp tlp-rdw tldr -y
+sudo systemctl enable tlp
 
 
 # Aesthetic
@@ -88,7 +130,7 @@ sudo apt install fonts-recommended fonts-ubuntu fonts-font-awesome fonts-terminu
 
 
 # Flatpak setup + GNOME-Software as the store with Flatpak integration
-sudo apt install flatpak gnome-software-plugin-flatpak xdg-desktop-portal qt5-flatpak-platformtheme libportal-* -y
+sudo apt install flatpak gnome-software-plugin-flatpak xdg-desktop-portal qt5-flatpak-platformtheme -y
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 
@@ -133,38 +175,24 @@ echo "" >> $HOME/.bashrc
 echo 'eval "$(zoxide init bash)"' >> $HOME/.bashrc
 
 
-# If an NVIDIA GPU is detected, sets up the NVIDIA Driver
-if lspci | grep -i nvidia > /dev/null; then
+# Set GTK Dark Theme
+sed -i 's/gtk-application-prefer-dark-theme=false/gtk-application-prefer-dark-theme=true/g' /home/johnylpm/.config/gtk-3.0/settings.ini
+sed -i 's/gtk-application-prefer-dark-theme=false/gtk-application-prefer-dark-theme=true/g' /home/johnylpm/.config/gtk-4.0/settings.ini
 
-    echo "It appears you have an NVIDIA GPU. I'll be taking some extra steps for your convenience! If you know what you're doing, you can cancel this step with Ctrl+C and reboot on your own, there's nothing else left to do."
-    sleep 2
 
-    sudo apt install software-properties-common -y
-    sudo add-apt-repository contrib non-free-firmware
-    sudo apt install dirmngr ca-certificates apt-transport-https dkms curl -y
-
-    curl -fSsL https://developer.download.nvidia.com/compute/cuda/repos/debian"$(lsb_release -sr 2>/dev/null)"/x86_64/3bf863cc.pub | sudo gpg --dearmor | sudo tee /usr/share/keyrings/nvidia-drivers.gpg > /dev/null 2>&1
-
-    echo "deb [signed-by=/usr/share/keyrings/nvidia-drivers.gpg] https://developer.download.nvidia.com/compute/cuda/repos/debian$(lsb_release -sr 2>/dev/null)/x86_64/ /" | sudo tee /etc/apt/sources.list.d/nvidia-drivers.list
-
-    sudo apt update -y
-    sudo apt install nvidia-driver nvidia-smi nvidia-settings -y
-
-    sudo sed -i 's/Name=Sway/Name=Sway (NVIDIA)/g' /usr/share/wayland-sessions/sway.desktop
-    sudo sed -i 's/Exec=sway/Exec=sway --unsupported-gpu/g' /usr/share/wayland-sessions/sway.desktop
-
-else
-    echo "It seems you don't have an NVIDIA GPU. Good for you!"
-fi
+# Set a few environment variables
+export MOZ_ENABLE_WAYLAND=1 >> $HOME/.profile
+export QT_QPA_PLATFORM=wayland >> $HOME/.profile
+export QT_QPA_PLATFORMTHEME=qt5ct >> $HOME/.profile
 
 
 # Final step
-read -p "We're done! Ready to reboot to your new system? (Y/n): " choice
-choice=$(echo "$choice" | tr '[:upper:]' '[:lower:]')
+read -p "We're done! Ready to reboot to your new system? (Y/n): " yn
+choice=$(echo "$yn" | tr '[:upper:]' '[:lower:]')
 
-if [ "$choice" == "y" || "$choice" == "yes" || "$choice" == "" ]; then
+if [ "$choice" == "y" ] || [ "$choice" == "yes" ] || [ "$choice" == "" ]; then
     echo "Alright, let's go then!"
-    sleep 2
+    sleep 3
     sudo reboot
 else
     echo "No? Gotcha, I'll hand it back to you, do your thing."
