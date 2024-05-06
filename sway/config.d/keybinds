@@ -23,7 +23,7 @@ bindsym $meta+q exec flatpak run one.ablaze.floorp
 bindsym $alt+f4 kill
 
 # Start your launcher (wofi)
-bindsym --release $meta exec pgrep wofi >/dev/null 2>&1 && killall wofi || wofi --show=drun --allow-images --sort-order=alphabetical --gtk-dark
+bindsym --release Super_L exec pgrep wofi >/dev/null 2>&1 && killall wofi || wofi --show=drun --allow-images --sort-order=alphabetical --gtk-dark
 
 # Brightness control
 bindsym XF86MonBrightnessUp exec brightnessctl set 5%+; exec notify-send -t 500 'Bright+'
@@ -80,7 +80,7 @@ bindsym Mod1+Right splith
 bindsym Mod1+Down splitv
 
 # Resizing containers (yes, up/right for increase and down/left for decrease, it doesn't depend on the window location, it's weird)
-bindsym $mod+Mod1+Left resize shrink width 20px
-bindsym $mod+Mod1+Right resize grow width 20px
-bindsym $mod+Mod1+Up resize grow height 20px
-bindsym $mod+Mod1+Down resize shrink height 20px
+bindsym $meta+Mod1+Left resize shrink width 20px
+bindsym $meta+Mod1+Right resize grow width 20px
+bindsym $meta+Mod1+Up resize grow height 20px
+bindsym $meta+Mod1+Down resize shrink height 20px

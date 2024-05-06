@@ -7,7 +7,7 @@ include $HOME/.config/sway/config.d/*
 exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
 
 # Wallpaper set
-output * bg $HOME/.config/sway/sway.png
+output * bg $HOME/.config/sway/sway.png fill
 
 # Status Bar (sway-bar):
 bar {
