@@ -1,10 +1,18 @@
 #!/usr/bin/env bash
 
-# Superuser authentication
-echo "Initial authentication required!"
-sudo echo "Thank you!"
+script="debianscript.sh"
+
+# Change into the directory where the script is, to make sure everything is consistent
+cd $(dirname $0)
+
+
+# Initial authentication
+echo "Superuser authentication check..."
+sudo "Authenticated. Proceeding."
+sleep 3
 sudo apt update -y
 sudo apt upgrade -y
+sudo apt install figlet -y
 
 
 # ZRAM Setup (sets ZRAM to use 8GB, a good value overrall)
@@ -16,65 +24,33 @@ sudo systemctl restart zramswap
 
 
 # Checks for updated kernel, if it isn't proceeds to install Zabbly's kernel
-if [ "$(cat $0.kstat)" == "updated" ]; then
-    echo "Great! Seems like you already have the updated kernel, $(uname -r), we can proceed!"
+if [ "$(cat kstat)" == "updated" ]; then
+    clear
+    figlet "You have the updated kernel, $(uname -r), we can proceed!"
     sleep 5
-    rm $0.kstat
+    rm kstat
     sed '$d' $HOME/.bashrc
-
 else
-    echo "Stay with me a sec, I'll update your kernel and then reboot and continue, be ready to login when we get back!"
+    figlet "I'll update your kernel now, be ready to login!"
     sleep 5
     sudo apt install lsb-release software-properties-common apt-transport-https ca-certificates curl -y
 
-    sudo curl -fSsL https://pkgs.zabbly.com/key.asc | gpg --dearmor | sudo tee /usr/share/keyrings/linux-zabbly.gpg > /dev/null
-    codename=$(lsb_release -sc 2>/dev/null) && echo deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/linux-zabbly.gpg] https://pkgs.zabbly.com/kernel/stable $codename main | sudo tee /etc/apt/sources.list.d/linux-zabbly.list
+    sudo curl -fSsL https://pkgs.zabbly.com/key.asc | sudo gpg --dearmor | sudo tee /usr/share/keyrings/linux-zabbly.gpg > /dev/null
+    codename=$(lsb_release -sc 2>/dev/null) && sudo echo deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/linux-zabbly.gpg] https://pkgs.zabbly.com/kernel/stable $codename main | sudo tee /etc/apt/sources.list.d/linux-zabbly.list
 
     sudo apt update -y
     sudo apt install linux-zabbly -y
 
-    echo "updated">$0.kstat
+    echo "updated">kstat
 
     # Add this script to autostart
-    echo "$0" >> $HOME/.bashrc
+    echo "$(pwd)/$script" >> $HOME/.bashrc
 
     clear
-    echo "I'll reboot it now, be ready to login when I come back!"
+    figlet "Time to reboot, get ready!"
     sleep 4
     sudo reboot
     exit 1
-fi
-
-
-# If an NVIDIA GPU is detected, sets up the NVIDIA Driver
-if lspci | grep -i nvidia > /dev/null; then
-    if nvidia-smi; then
-        echo "You've got the NVIDIA drivers, alrighty!"
-        sleep 4
-    else
-        echo "It appears you have an NVIDIA GPU. I'll be taking some extra steps for your convenience!"
-        sleep 4
-
-        sudo apt install software-properties-common -y
-        sudo add-apt-repository contrib non-free-firmware -y
-        sudo apt install dirmngr ca-certificates apt-transport-https dkms curl -y
-
-        sudo curl -fSsL https://developer.download.nvidia.com/compute/cuda/repos/debian"$(lsb_release -sr 2>/dev/null)"/x86_64/3bf863cc.pub | sudo gpg --dearmor | sudo tee /usr/share/keyrings/nvidia-drivers.gpg > /dev/null 2>&1
-
-        echo "deb [signed-by=/usr/share/keyrings/nvidia-drivers.gpg] https://developer.download.nvidia.com/compute/cuda/repos/debian$(lsb_release -sr 2>/dev/null)/x86_64/ /" | sudo tee /etc/apt/sources.list.d/nvidia-drivers.list
-
-        sudo apt update -y
-        sudo apt install nvidia-driver nvidia-smi nvidia-settings -y
-
-        sudo mkdir -p /usr/share/wayland-sessions
-        sudo echo -e "[Desktop Entry]\nName=Sway (NVIDIA)\nExec=sway --unsupported-gpu\nType=Application" > /usr/share/wayland-sessions/swaynvidia.desktop
-        chmod +x /usr/share/wayland-sessions/swaynvidia.desktop
-
-        sudo sed -i 's/quiet/quiet nvidia-drm.modeset=1/g' /etc/default/grub
-
-else
-    echo "It seems you don't have an NVIDIA GPU. Good for you!"
-    sleep 5
 fi
 
 
@@ -82,9 +58,26 @@ fi
 sudo apt install policykit-1 policykit-1-gnome -y
 
 
+# Pulseaudio/Pipewire stuff (a lot of the pipewire stuff comes with gnome-tweaks)
+sudo apt install pipewire wireplumber pulseaudio-utils pavucontrol pamixer gnome-tweaks -y
+# For some reason gnome-tweaks doesn't create a desktop file on its own, so we do it manually
+sudo echo -e "[Desktop Entry]\nName=GNOME-Tweaks\nExec=gnome-tweaks\nType=Application\nTerminal=false\nIcon=tweaks-app" > /usr/share/applications/gnometweaks.desktop
+chmod +x /usr/share/applications/gnometweaks.desktop
+
+
 # Login Manager installation (SDDM)
 sudo apt install --no-install-recommends sddm -y
-sudo systemctl enable sddm.service -f
+sudo systemctl enable sddm.service
+
+
+# Sway
+sudo apt install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst libnotify-bin libnotify-dev -y
+rm $HOME/.config/sway/config
+cp -r ./sway/* $HOME/.config/sway/
+
+
+# Add User directories
+xdg-user-dirs-update
 
 
 # Good utils
@@ -93,26 +86,6 @@ sudo systemctl enable avahi-daemon
 sudo systemctl enable acpid
 
 
-# Fastfetch hehe
-wget https://github.com/fastfetch-cli/fastfetch/releases/download/2.11.0/fastfetch-linux-amd64.deb
-sudo apt install ./fastfetch-linux-amd64.deb -y
-sudo rm fastfetch-linux-amd64.deb
-echo "alias neofetch='fastfetch -c neofetch'" >> $HOME/.bashrc
-
-
-# Pulseaudio/Pipewire stuff (a lot of the pipewire stuff comes with gnome-tweaks)
-sudo apt install pipewire wireplumber pulseaudio-utils pavucontrol pamixer gnome-tweaks -y
-
-
-# Sway
-mkdir -p $HOME/.config/sway
-cp -r ./sway/*  $HOME/.config/sway/*
-sudo apt install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst libnotify-bin libnotify-dev -y
-
-
-# Add User directories
-xdg-user-dirs-update
-
 # Utils for average use (some are included in other sections)
 sudo apt install wlr-randr brightnessctl qt5ct qt6ct mesa-utils pciutils unrar unzip blueman synaptic timeshift kcalc tlp tlp-rdw tldr -y
 sudo systemctl enable tlp
@@ -120,6 +93,20 @@ sudo systemctl enable tlp
 
 # Aesthetic
 sudo apt install fonts-recommended fonts-ubuntu fonts-font-awesome fonts-terminus papirus-icon-theme -y
+sudo wget https://github.com/lassekongo83/adw-gtk3/releases/download/v5.3/adw-gtk3v5.3.tar.xz
+sudo tar xvf adw-gtk3v5.3.tar.xz
+sudo rm adw-gtk3v5.3.tar.xz
+sudo cp -r adw-gtk3-dark /usr/share/themes
+gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"
+gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+
+
+# Fastfetch hehe
+sudo wget https://github.com/fastfetch-cli/fastfetch/releases/download/2.11.0/fastfetch-linux-amd64.deb
+sudo apt install ./fastfetch-linux-amd64.deb -y
+sudo rm fastfetch-linux-amd64.deb
+echo "alias neofetch='fastfetch -c neofetch'" >> $HOME/.bashrc
 
 
 # Flatpak setup + GNOME-Software as the store with Flatpak integration
@@ -127,23 +114,15 @@ sudo apt install flatpak gnome-software gnome-software-plugin-flatpak xdg-deskto
 sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 
-#Flatpak utils
+# Flatpak utils
 flatpak install com.github.tchx84.Flatseal -y
 flatpak install io.github.flattool.Warehouse -y
 
 
-# Distrobox + BoxBuddy
-#sudo apt install podman distrobox -y
-#flatpak install io.github.dvlv.boxbuddyrs -y
-
-
-# Ptyxis as the container-focused terminal + arch image setup
-#flatpak install --user --from https://nightly.gnome.org/repo/appstream/org.gnome.Ptyxis.Devel.flatpakref -y
-#distrobox-create archlinux --image docker.io/library/archlinux:latest
-
-
 # Install standard utilities for daily use
 #sudo apt install vlc -y
+sudo apt install celluloid -y
+sudo apt install micro -y
 #sudo apt install thunar fileroller -y
 #flatpak install com.google.Chrome -y
 flatpak install org.onlyoffice.desktopeditors -y
@@ -160,37 +139,21 @@ flatpak install com.heroicgameslauncher.hgl -y
 flatpak install page.kramo.Cartridges -y
 
 
-# Set zoxide as the change directory command
-#curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
-#echo "alias cd='z'" >> $HOME/.bashrc
-#echo "alias cdi='z'" >> $HOME/.bashrc
-#echo "" >> $HOME/.bashrc
-#echo 'eval "$(zoxide init bash)"' >> $HOME/.bashrc
-
-
-# Set GTK Dark Theme
-mkdir -p $HOME/.config/gtk-3.0
-mkdir -p $HOME/.config/gtk-4.0
-echo "gtk-application-prefer-dark-theme=true" > $HOME/.config/gtk-3.0/settings.ini
-echo "gtk-application-prefer-dark-theme=true" > $HOME/.config/gtk-4.0/settings.ini
-
-
 # Set a few environment variables
 "export MOZ_ENABLE_WAYLAND=1" >> $HOME/.profile
 "export QT_QPA_PLATFORM=wayland" >> $HOME/.profile
 "export QT_QPA_PLATFORMTHEME=qt5ct" >> $HOME/.profile
 
-sudo apt install connman connman-gtk wpagui wpasupplicant -y
 
 # Final step
 read -p "We're done! Ready to reboot to your new system? (Y/n): " yn
 choice=$(echo "$yn" | tr '[:upper:]' '[:lower:]')
 
 if [ "$choice" == "y" ] || [ "$choice" == "yes" ] || [ "$choice" == "" ]; then
-    echo "Alright, let's go then!"
+    figlet "Alright, let's go then!"
     sleep 3
     sudo reboot
 else
-    echo "No? Gotcha, I'll hand it back to you, do your thing."
+    figlet "No? Gotcha, I'll hand it back to you, do your thing."
     source $HOME/.bashrc
 fi
