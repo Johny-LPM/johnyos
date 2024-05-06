@@ -56,7 +56,7 @@ if lspci | grep -i nvidia > /dev/null; then
         sleep 4
 
         sudo apt install software-properties-common -y
-        sudo add-apt-repository contrib non-free-firmware
+        sudo add-apt-repository contrib non-free-firmware -y
         sudo apt install dirmngr ca-certificates apt-transport-https dkms curl -y
 
         sudo curl -fSsL https://developer.download.nvidia.com/compute/cuda/repos/debian"$(lsb_release -sr 2>/dev/null)"/x86_64/3bf863cc.pub | sudo gpg --dearmor | sudo tee /usr/share/keyrings/nvidia-drivers.gpg > /dev/null 2>&1
@@ -70,14 +70,12 @@ if lspci | grep -i nvidia > /dev/null; then
         sudo echo -e "[Desktop Entry]\nName=Sway (NVIDIA)\nExec=sway --unsupported-gpu\nType=Application" > /usr/share/wayland-sessions/swaynvidia.desktop
         chmod +x /usr/share/wayland-sessions/swaynvidia.desktop
 
+        sudo sed -i 's/quiet/quiet nvidia-drm.modeset=1/g' /etc/default/grub
+
 else
     echo "It seems you don't have an NVIDIA GPU. Good for you!"
     sleep 5
 fi
-
-
-# Remove from autostart
-rm /etc/xdg/autostart/debiansetup.desktop
 
 
 # Policy Kit (required for some things, better keep)
@@ -108,7 +106,7 @@ sudo apt install pipewire wireplumber pulseaudio-utils pavucontrol pamixer gnome
 
 # Sway
 mkdir -p $HOME/.config/sway
-cp $(dirname $0)/sway/*  $HOME/.config/sway/*
+cp -r ./sway/*  $HOME/.config/sway/*
 sudo apt install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst libnotify-bin libnotify-dev -y
 
 
@@ -182,7 +180,7 @@ echo "gtk-application-prefer-dark-theme=true" > $HOME/.config/gtk-4.0/settings.i
 "export QT_QPA_PLATFORM=wayland" >> $HOME/.profile
 "export QT_QPA_PLATFORMTHEME=qt5ct" >> $HOME/.profile
 
-sudo apt install connman connman-gtk wpagui wpasupplicant
+sudo apt install connman connman-gtk wpagui wpasupplicant -y
 
 # Final step
 read -p "We're done! Ready to reboot to your new system? (Y/n): " yn
