@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-script="debianscript.sh"
+script="debiansetup.sh"
 
 # Change into the directory where the script is, to make sure everything is consistent
 cd $(dirname $0)
@@ -31,6 +31,7 @@ if [ "$(cat kstat)" == "updated" ]; then
     rm kstat
     sed '$d' $HOME/.bashrc
 else
+    clear
     figlet "I'll update your kernel now, be ready to login!"
     sleep 5
     sudo apt install lsb-release software-properties-common apt-transport-https ca-certificates curl -y
@@ -55,25 +56,28 @@ fi
 
 
 # Policy Kit (required for some things, better keep)
-sudo apt install policykit-1 policykit-1-gnome -y
+sudo apt install policykit-1 mate-polkit -y
 
 
 # Pulseaudio/Pipewire stuff (a lot of the pipewire stuff comes with gnome-tweaks)
 sudo apt install pipewire wireplumber pulseaudio-utils pavucontrol pamixer gnome-tweaks -y
 # For some reason gnome-tweaks doesn't create a desktop file on its own, so we do it manually
-sudo echo -e "[Desktop Entry]\nName=GNOME-Tweaks\nExec=gnome-tweaks\nType=Application\nTerminal=false\nIcon=tweaks-app" > /usr/share/applications/gnometweaks.desktop
-chmod +x /usr/share/applications/gnometweaks.desktop
+mkdir -p $HOME/.local/share/applications
+sudo echo -e "[Desktop Entry]\nName=GNOME-Tweaks\nExec=gnome-tweaks\nType=Application\nTerminal=false\nIcon=tweaks-app" > $HOME/.local/share/applications/gnometweaks.desktop
+chmod +x $HOME/.local/share/applications/gnometweaks.desktop
 
 
-# Login Manager installation (SDDM)
-sudo apt install --no-install-recommends sddm -y
-sudo systemctl enable sddm.service
+# Login Manager installation (GDM3, because it has better integration with Sway)
+sudo apt install --no-install-recommends gdm3 -y
 
 
 # Sway
-sudo apt install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst libnotify-bin libnotify-dev -y
+sudo apt install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst grim slurp libnotify-bin libnotify-dev -y
 rm $HOME/.config/sway/config
+mkdir -p $HOME/.config/sway
 cp -r ./sway/* $HOME/.config/sway/
+sudo apt remove foot -y
+sudo apt install terminator -y
 
 
 # Add User directories
@@ -91,12 +95,14 @@ sudo apt install wlr-randr brightnessctl qt5ct qt6ct mesa-utils pciutils unrar u
 sudo systemctl enable tlp
 
 
-# Aesthetic
+# Aesthetic (set Papirus and Adw-Gtk3 for the GTK theme to look like Libadwaita4)
 sudo apt install fonts-recommended fonts-ubuntu fonts-font-awesome fonts-terminus papirus-icon-theme -y
 sudo wget https://github.com/lassekongo83/adw-gtk3/releases/download/v5.3/adw-gtk3v5.3.tar.xz
 sudo tar xvf adw-gtk3v5.3.tar.xz
 sudo rm adw-gtk3v5.3.tar.xz
-sudo cp -r adw-gtk3-dark /usr/share/themes
+sudo mkdir -p $HOME/.themes
+sudo cp -r adw-gtk* $HOME/.themes
+sudo rm -r adw-gtk*
 gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"
 gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
 gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
@@ -114,6 +120,13 @@ sudo apt install flatpak gnome-software gnome-software-plugin-flatpak xdg-deskto
 sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 
+# Aesthetic for Flatpaks
+sudo flatpak override --filesystem=$HOME/.themes
+sudo flatpak override --filesystem=/usr/share/icons
+sudo flatpak override --env=GTK_THEME=adw-gtk3-dark
+sudo flatpak override --env=ICON_THEME=Papirus-Dark
+
+
 # Flatpak utils
 flatpak install com.github.tchx84.Flatseal -y
 flatpak install io.github.flattool.Warehouse -y
@@ -123,15 +136,13 @@ flatpak install io.github.flattool.Warehouse -y
 #sudo apt install vlc -y
 sudo apt install celluloid -y
 sudo apt install micro -y
-#sudo apt install thunar fileroller -y
+sudo apt install thunar fileroller -y
 #flatpak install com.google.Chrome -y
 flatpak install org.onlyoffice.desktopeditors -y
 flatpak install com.github.d4nj1.tlpui -y
 
 
 # Optional (my personal configuration)
-sudo apt install mpv micro -y
-sudo apt install dolphin ark -y
 flatpak install com.brave.Browser -y
 flatpak install com.valvesoftware.Steam -y
 flatpak install net.lutris.Lutris -y
@@ -140,9 +151,13 @@ flatpak install page.kramo.Cartridges -y
 
 
 # Set a few environment variables
-"export MOZ_ENABLE_WAYLAND=1" >> $HOME/.profile
-"export QT_QPA_PLATFORM=wayland" >> $HOME/.profile
-"export QT_QPA_PLATFORMTHEME=qt5ct" >> $HOME/.profile
+echo "export MOZ_ENABLE_WAYLAND=1" >> $HOME/.profile
+echo "export QT_QPA_PLATFORM=wayland" >> $HOME/.profile
+echo "export QT_QPA_PLATFORMTHEME=qt5ct" >> $HOME/.profile
+
+
+# Networking
+sudo apt install wpasupplicant wpagui -y
 
 
 # Final step
@@ -150,10 +165,12 @@ read -p "We're done! Ready to reboot to your new system? (Y/n): " yn
 choice=$(echo "$yn" | tr '[:upper:]' '[:lower:]')
 
 if [ "$choice" == "y" ] || [ "$choice" == "yes" ] || [ "$choice" == "" ]; then
+    clear
     figlet "Alright, let's go then!"
     sleep 3
     sudo reboot
 else
+    clear
     figlet "No? Gotcha, I'll hand it back to you, do your thing."
     source $HOME/.bashrc
 fi

@@ -3,22 +3,15 @@ include /etc/sway/config.d/*
 include $HOME/.config/sway/config.d/*
 
 
-# Fix GTK Issue
-exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
-
 # Wallpaper set
 output * bg $HOME/.config/sway/sway.png fill
 
-# Status Bar (sway-bar):
+
+# Status Bar (waybar):
 bar {
     swaybar_command waybar
 }
 
-# Theming
-#exec_always {
-#    gsettings set org.gnome.desktop.interface gtk-theme "Adapta-Nokto"
-#    gsettings set org.gnome.desktop.interface icon-theme "Papirus-Dark"
-#}
 
 ### Idle configuration
 

@@ -1,86 +1,109 @@
-set $meta Mod4
+set $super Mod4
 set $alt Mod1
 
 # Custom (add your entries here, and you can change the current ones as you please)
 
 
 # Reload the configuration file
-bindsym $meta+Shift+r reload; exec notify-send -t 2000 'Reloaded'
+bindsym $super+Shift+r reload; exec notify-send -t 2000 'Reloaded'
+
 
 # Exit sway (logs you out of your Wayland session)
-bindsym $meta+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+bindsym $super+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
 
-# Terminal (Ptyxis)
-bindsym $meta+t exec flatpak run org.gnome.Ptyxis.Devel -s
+
+# Terminal (Ptyxis/Terminator)
+bindsym $super+t exec flatpak run org.gnome.Ptyxis.Devel -s
+bindsym Ctrl_L+$alt+t exec terminator
+
 
 # File manager (Dolphin)
-bindsym $meta+f exec Dolphin
+bindsym $super+f exec Dolphin
 
-# Browser (Floorp)
-bindsym $meta+q exec flatpak run one.ablaze.floorp
+
+# Browser (Chrome)
+#bindsym $super+q exec flatpak run com.google.Chrome
+bindsym $super+q exec flatpak run com.brave.Browser
+
 
 # Kill active window
 bindsym $alt+f4 kill
 
+
 # Start your launcher (wofi)
 bindsym --release Super_L exec pgrep wofi >/dev/null 2>&1 && killall wofi || wofi --show=drun --allow-images --sort-order=alphabetical --gtk-dark
 
+
+# Screen Capture
+bindsym Print exec grim ~/Pictures/$(date +"%Y-%m-%d_%H-%M-%S").png; exec notify-send 'Grim' 'Image saved to ~/Pictures'
+bindsym $super
++Print exec grim -g "$(slurp)" ~/Pictures/$(date +"%Y-%m-%d_%H-%M-%S").png; exec notify-send 'Grim' 'Selected image saved to ~/Pictures'
+
+
 # Brightness control
-bindsym XF86MonBrightnessUp exec brightnessctl set 5%+; exec notify-send -t 500 'Bright+'
-bindsym XF86MonBrightnessDown exec brightnessctl set 5%-; exec notify-send -t 500 'Bright-'
+bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+
 
 # Volume control
-bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle; exec notify-send -t 500 'Muted'
-bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%; exec notify-send -t 500 'Vol+'
-bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%; exec notify-send -t 500 'Vol-'
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+
 
 # Change focus of windows
-bindsym $meta+Left focus left
-bindsym $meta+Down focus down
-bindsym $meta+Up focus up
-bindsym $meta+Right focus right
+bindsym $super+Left focus left
+bindsym $super+Down focus down
+bindsym $super+Up focus up
+bindsym $super+Right focus right
+
 
 # Move the focused window with the same, but add Shift
-bindsym $meta+Shift+Left move left
-bindsym $meta+Shift+Down move down
-bindsym $meta+Shift+Up move up
-bindsym $meta+Shift+Right move right
+bindsym $super+Shift+Left move left
+bindsym $super+Shift+Down move down
+bindsym $super+Shift+Up move up
+bindsym $super+Shift+Right move right
+
 
 # Switch to workspace
-bindsym $meta+1 workspace number 1
-bindsym $meta+2 workspace number 2
-bindsym $meta+3 workspace number 3
-bindsym $meta+4 workspace number 4
-bindsym $meta+5 workspace number 5
-bindsym $meta+6 workspace number 6
-bindsym $meta+7 workspace number 7
-bindsym $meta+8 workspace number 8
-bindsym $meta+9 workspace number 9
-bindsym $meta+0 workspace number 10
+bindsym $super+1 workspace number 1
+bindsym $super+2 workspace number 2
+bindsym $super+3 workspace number 3
+bindsym $super+4 workspace number 4
+bindsym $super+5 workspace number 5
+bindsym $super+6 workspace number 6
+bindsym $super+7 workspace number 7
+bindsym $super+8 workspace number 8
+bindsym $super+9 workspace number 9
+bindsym $super+0 workspace number 10
+
 
 # Move focused container to workspace
-bindsym $meta+Shift+1 move container to workspace number 1
-bindsym $meta+Shift+2 move container to workspace number 2
-bindsym $meta+Shift+3 move container to workspace number 3
-bindsym $meta+Shift+4 move container to workspace number 4
-bindsym $meta+Shift+5 move container to workspace number 5
-bindsym $meta+Shift+6 move container to workspace number 6
-bindsym $meta+Shift+7 move container to workspace number 7
-bindsym $meta+Shift+8 move container to workspace number 8
-bindsym $meta+Shift+9 move container to workspace number 9
-bindsym $meta+Shift+0 move container to workspace number 10
+bindsym $super+Shift+1 move container to workspace number 1
+bindsym $super+Shift+2 move container to workspace number 2
+bindsym $super+Shift+3 move container to workspace number 3
+bindsym $super+Shift+4 move container to workspace number 4
+bindsym $super+Shift+5 move container to workspace number 5
+bindsym $super+Shift+6 move container to workspace number 6
+bindsym $super+Shift+7 move container to workspace number 7
+bindsym $super+Shift+8 move container to workspace number 8
+bindsym $super+Shift+9 move container to workspace number 9
+bindsym $super+Shift+0 move container to workspace number 10
 ## Note: workspaces can have any name you want, not just numbers. This is just the default.
+
 
 # Move forward and backward (like the window switcher with Alt+Tab, Super+Tab being the inverse)
 bindsym $alt+Tab workspace next
-bindsym $meta+Tab workspace prev
+bindsym $super+Tab workspace prev
+
 
 # Select split mode (Alt+Right changes to horizontal, Alt+Left changes to vertical)
-bindsym Mod1+Right splith
-bindsym Mod1+Down splitv
+bindsym $alt+Right splith
+bindsym $alt+Down splitv
+
 
 # Resizing containers (yes, up/right for increase and down/left for decrease, it doesn't depend on the window location, it's weird)
-bindsym $meta+Mod1+Left resize shrink width 20px
-bindsym $meta+Mod1+Right resize grow width 20px
-bindsym $meta+Mod1+Up resize grow height 20px
-bindsym $meta+Mod1+Down resize shrink height 20px
+bindsym $super+Mod1+Left resize shrink width 20px
+bindsym $super+Mod1+Right resize grow width 20px
+bindsym $super+Mod1+Up resize grow height 20px
+bindsym $super+Mod1+Down resize shrink height 20px
