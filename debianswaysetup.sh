@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-script="bookwormswaysetup.sh"
+script="debianswaysetup.sh"
 
 # Change into the directory where the script is, to make sure everything is consistent
 cd $(dirname $0)
@@ -35,7 +35,12 @@ else
     figlet "I'll update your kernel now, be ready to login!"
     sleep 5
     sudo apt install lsb-release software-properties-common apt-transport-https ca-certificates curl -y
-    sudo apt install linux-headers-amd64/bookworm-backports
+
+    sudo curl -fSsL https://pkgs.zabbly.com/key.asc | gpg --dearmor | sudo tee /usr/share/keyrings/linux-zabbly.gpg > /dev/null
+    codename=$(lsb_release -sc 2>/dev/null) && echo deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/linux-zabbly.gpg] https://pkgs.zabbly.com/kernel/stable $codename main | sudo tee /etc/apt/sources.list.d/linux-zabbly.list
+
+    sudo apt update -y
+    sudo apt install linux-zabbly -y
 
     echo "updated">kstat
 
@@ -56,6 +61,7 @@ sudo apt install policykit-1 mate-polkit -y
 
 # Pulseaudio/Pipewire stuff (a lot of the pipewire stuff comes with gnome-tweaks)
 sudo apt install pipewire wireplumber pulseaudio-utils pavucontrol pamixer gnome-tweaks -y
+
 # For some reason gnome-tweaks doesn't create a desktop file on its own, so we do it manually
 mkdir -p $HOME/.local/share/applications
 sudo echo -e "[Desktop Entry]\nName=GNOME-Tweaks\nExec=gnome-tweaks\nType=Application\nTerminal=false\nIcon=tweaks-app" > $HOME/.local/share/applications/gnometweaks.desktop
@@ -63,7 +69,7 @@ chmod +x $HOME/.local/share/applications/gnometweaks.desktop
 
 
 # Login Manager installation (GDM3, because it has better integration with Sway)
-#sudo apt install --no-install-recommends gdm3 -y
+sudo apt install --no-install-recommends gdm3 -y
 
 
 # Sway
@@ -131,7 +137,7 @@ flatpak install io.github.flattool.Warehouse -y
 #sudo apt install vlc -y
 sudo apt install celluloid -y
 sudo apt install micro -y
-sudo apt install thunar fileroller -y
+sudo apt install thunar file-roller -y
 #flatpak install com.google.Chrome -y
 flatpak install org.onlyoffice.desktopeditors -y
 flatpak install com.github.d4nj1.tlpui -y
@@ -155,45 +161,19 @@ echo "export QT_QPA_PLATFORMTHEME=qt5ct" >> $HOME/.profile
 sudo apt install wpasupplicant wpagui -y
 
 
-# If an NVIDIA GPU is detected, sets up the NVIDIA Driver
-if lspci | grep -i nvidia > /dev/null; then
-    if nvidia-smi; then
-        echo "You've got the NVIDIA drivers, alrighty!"
-        sleep 4
-    else
-        echo "It appears you have an NVIDIA GPU. I'll be taking some extra steps for your convenience!"
-        sleep 4
-
-        sudo apt install software-properties-common -y
-        sudo add-apt-repository contrib non-free-firmware -y
-        sudo apt install dirmngr ca-certificates apt-transport-https dkms curl -y
-
-        sudo apt update -y
-        sudo apt install nvidia-driver nvidia-smi nvidia-settings -y
-
-        sudo sed -i 's/quiet/quiet nvidia-drm.modeset=1/g' /etc/default/grub
-        sudo update-grub
-        echo -e "if ps -e | grep sway >/dev/null; then\n   echo ''>/dev/null\nelse\n    sway --unsupported-gpu\nfi" >> $HOME/.bashrc
-    fi
-else
-    echo "It seems you don't have an NVIDIA GPU. Good for you!"
-    echo -e "if ps -e | grep sway >/dev/null; then\n   echo ''>/dev/null\nelse\n    sway\nfi" >> $HOME/.bashrc
-    sleep 5
-fi
-
-
 # Final step
 clear
-read -p "We're done! Ready to reboot to your new system? (Y/n): " yn
+figlet -tc "WE'RE DONE! READY TO REBOOT TO YOU NEW SYSTEM?"
+read -p "(Y/n): " yn
 choice=$(echo "$yn" | tr '[:upper:]' '[:lower:]')
 
 if [ "$choice" == "y" ] || [ "$choice" == "yes" ] || [ "$choice" == "" ]; then
     clear
-    figlet "Alright, let's go then!"
+    figlet -tc "ALRIGHT, LET'S GO THEN!"
     sleep 3
     sudo reboot
 else
     clear
-    figlet "No? Gotcha, I'll hand it back to you, do your thing."
+    figlet -tc "NO? GOTCHA, I'LL HAND IT BACK TO YOU, DO YOUR THING."
     source $HOME/.bashrc
 fi

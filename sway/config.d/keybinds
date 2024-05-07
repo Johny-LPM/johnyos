@@ -14,7 +14,7 @@ bindsym $super+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut
 
 # Terminal (Ptyxis/Terminator)
 bindsym $super+t exec flatpak run org.gnome.Ptyxis.Devel -s
-bindsym Ctrl_L+$alt+t exec terminator
+bindsym Ctrl+$alt+t exec terminator
 
 
 # File manager (Dolphin)
@@ -36,8 +36,7 @@ bindsym --release Super_L exec pgrep wofi >/dev/null 2>&1 && killall wofi || wof
 
 # Screen Capture
 bindsym Print exec grim ~/Pictures/$(date +"%Y-%m-%d_%H-%M-%S").png; exec notify-send 'Grim' 'Image saved to ~/Pictures'
-bindsym $super
-+Print exec grim -g "$(slurp)" ~/Pictures/$(date +"%Y-%m-%d_%H-%M-%S").png; exec notify-send 'Grim' 'Selected image saved to ~/Pictures'
+bindsym $super+Print exec grim -g "$(slurp)" ~/Pictures/$(date +"%Y-%m-%d_%H-%M-%S").png; exec notify-send 'Grim' 'Selected image saved to ~/Pictures'
 
 
 # Brightness control

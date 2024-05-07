@@ -8,8 +8,8 @@ output * bg $HOME/.config/sway/sway.png fill
 
 
 # Example monitor configuration (obtain names with swaymsg -t get_outputs):
-output HDMI-A-1 resolution 1920x1080 position 0,0
-output eDP-1 resolution 1920x1080 position 1920,430
+#output HDMI-A-1 resolution 1920x1080 position 0,0
+#output eDP-1 resolution 1920x1080 position 1920,430
 
 
 # Status Bar (waybar):
