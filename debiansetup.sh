@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
-script="debianswaysetup.sh"
+script="debiansetup.sh"
 
 # Change into the directory where the script is, to make sure everything is consistent
 cd $(dirname $0)
 
 
 # Initial authentication
+clear
 echo "Superuser authentication check..."
 sudo echo "Authenticated. Proceeding."
 sleep 3
@@ -55,30 +56,14 @@ else
 fi
 
 
-# Policy Kit (required for some things, better keep)
-sudo apt install policykit-1 mate-polkit -y
-
-
 # Pulseaudio/Pipewire stuff (a lot of the pipewire stuff comes with gnome-tweaks)
 sudo apt install pipewire wireplumber pulseaudio-utils pavucontrol pamixer gnome-tweaks -y
+
 
 # For some reason gnome-tweaks doesn't create a desktop file on its own, so we do it manually
 mkdir -p $HOME/.local/share/applications
 sudo echo -e "[Desktop Entry]\nName=GNOME-Tweaks\nExec=gnome-tweaks\nType=Application\nTerminal=false\nIcon=tweaks-app" > $HOME/.local/share/applications/gnometweaks.desktop
 chmod +x $HOME/.local/share/applications/gnometweaks.desktop
-
-
-# Login Manager installation (GDM3, because it has better integration with Sway)
-sudo apt install --no-install-recommends gdm3 -y
-
-
-# Sway
-sudo apt install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst grim slurp libnotify-bin libnotify-dev -y
-rm $HOME/.config/sway/config
-mkdir -p $HOME/.config/sway
-cp -r ./sway/* $HOME/.config/sway/
-sudo apt remove foot -y
-sudo apt install terminator -y
 
 
 # Add User directories
@@ -92,7 +77,7 @@ sudo systemctl enable acpid
 
 
 # Utils for average use (some are included in other sections)
-sudo apt install wlr-randr brightnessctl qt5ct qt6ct mesa-utils pciutils unrar unzip blueman synaptic timeshift kcalc tlp tlp-rdw tldr -y
+sudo apt install brightnessctl qt5ct qt6ct mesa-utils pciutils unrar unzip synaptic timeshift tlp tlp-rdw tldr -y
 sudo systemctl enable tlp
 
 
@@ -116,9 +101,19 @@ sudo rm fastfetch-linux-amd64.deb
 echo "alias neofetch='fastfetch -c neofetch'" >> $HOME/.bashrc
 
 
-# Flatpak setup + GNOME-Software as the store with Flatpak integration
-sudo apt install flatpak gnome-software gnome-software-plugin-flatpak xdg-desktop-portal qt5-flatpak-platformtheme -y
+# Flatpak setup
+sudo apt install flatpak xdg-desktop-portal qt5-flatpak-platformtheme -y
 sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+
+# Distrobox + BoxBuddy
+sudo apt install podman distrobox -y
+flatpak install io.github.dvlv.boxbuddyrs -y
+
+
+# Ptyxis as the container-focused terminal + arch image setup
+flatpak install --user --from https://nightly.gnome.org/repo/appstream/org.gnome.Ptyxis.Devel.flatpakref -y
+distrobox-create archlinux --image docker.io/library/archlinux:latest --nvidia
 
 
 # Aesthetic for Flatpaks
@@ -131,13 +126,14 @@ sudo flatpak override --env=ICON_THEME=Papirus-Dark
 # Flatpak utils
 flatpak install com.github.tchx84.Flatseal -y
 flatpak install io.github.flattool.Warehouse -y
+# And for AppImage
+flatpak install it.mijorus.gearlever -y
 
 
 # Install standard utilities for daily use
 #sudo apt install vlc -y
 sudo apt install celluloid -y
 sudo apt install micro -y
-sudo apt install thunar file-roller -y
 #flatpak install com.google.Chrome -y
 flatpak install org.onlyoffice.desktopeditors -y
 flatpak install com.github.d4nj1.tlpui -y
@@ -155,25 +151,3 @@ flatpak install page.kramo.Cartridges -y
 echo "export MOZ_ENABLE_WAYLAND=1" >> $HOME/.profile
 echo "export QT_QPA_PLATFORM=wayland" >> $HOME/.profile
 echo "export QT_QPA_PLATFORMTHEME=qt5ct" >> $HOME/.profile
-
-
-# Networking
-sudo apt install wpasupplicant wpagui -y
-
-
-# Final step
-clear
-figlet -tc "WE'RE DONE! READY TO REBOOT TO YOU NEW SYSTEM?"
-read -p "(Y/n): " yn
-choice=$(echo "$yn" | tr '[:upper:]' '[:lower:]')
-
-if [ "$choice" == "y" ] || [ "$choice" == "yes" ] || [ "$choice" == "" ]; then
-    clear
-    figlet -tc "ALRIGHT, LET'S GO THEN!"
-    sleep 3
-    sudo reboot
-else
-    clear
-    figlet -tc "NO? GOTCHA, I'LL HAND IT BACK TO YOU, DO YOUR THING."
-    source $HOME/.bashrc
-fi

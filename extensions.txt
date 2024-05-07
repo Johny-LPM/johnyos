@@ -1,0 +1,2 @@
+https://extensions.gnome.org/extension/7/removable-drive-menu/
+https://extensions.gnome.org/extension/28/gtile/
