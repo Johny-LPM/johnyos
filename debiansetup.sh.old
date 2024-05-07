@@ -71,7 +71,7 @@ if lspci | grep -i nvidia > /dev/null; then
         chmod +x /usr/share/wayland-sessions/swaynvidia.desktop
 
         sudo sed -i 's/quiet/quiet nvidia-drm.modeset=1/g' /etc/default/grub
-
+    fi
 else
     echo "It seems you don't have an NVIDIA GPU. Good for you!"
     sleep 5

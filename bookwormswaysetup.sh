@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-script="debiansetup.sh"
+script="bookwormswaysetup.sh"
 
 # Change into the directory where the script is, to make sure everything is consistent
 cd $(dirname $0)
@@ -12,7 +12,7 @@ sudo "Authenticated. Proceeding."
 sleep 3
 sudo apt update -y
 sudo apt upgrade -y
-sudo apt install figlet -y
+sudo apt install figlet nala -y
 
 
 # ZRAM Setup (sets ZRAM to use 8GB, a good value overrall)
@@ -29,7 +29,7 @@ if [ "$(cat kstat)" == "updated" ]; then
     figlet "You have the updated kernel, $(uname -r), we can proceed!"
     sleep 5
     rm kstat
-    sed '$d' $HOME/.bashrc
+    sed -i '$d' $HOME/.bashrc
 else
     clear
     figlet "I'll update your kernel now, be ready to login!"
@@ -56,11 +56,11 @@ fi
 
 
 # Policy Kit (required for some things, better keep)
-sudo apt install policykit-1 mate-polkit -y
+sudo nala install policykit-1 mate-polkit -y
 
 
 # Pulseaudio/Pipewire stuff (a lot of the pipewire stuff comes with gnome-tweaks)
-sudo apt install pipewire wireplumber pulseaudio-utils pavucontrol pamixer gnome-tweaks -y
+sudo nala install pipewire wireplumber pulseaudio-utils pavucontrol pamixer gnome-tweaks -y
 # For some reason gnome-tweaks doesn't create a desktop file on its own, so we do it manually
 mkdir -p $HOME/.local/share/applications
 sudo echo -e "[Desktop Entry]\nName=GNOME-Tweaks\nExec=gnome-tweaks\nType=Application\nTerminal=false\nIcon=tweaks-app" > $HOME/.local/share/applications/gnometweaks.desktop
@@ -68,16 +68,16 @@ chmod +x $HOME/.local/share/applications/gnometweaks.desktop
 
 
 # Login Manager installation (GDM3, because it has better integration with Sway)
-sudo apt install --no-install-recommends gdm3 -y
+#sudo nala install --no-install-recommends gdm3 -y
 
 
 # Sway
-sudo apt install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst grim slurp libnotify-bin libnotify-dev -y
+sudo nala install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst grim slurp libnotify-bin libnotify-dev -y
 rm $HOME/.config/sway/config
 mkdir -p $HOME/.config/sway
 cp -r ./sway/* $HOME/.config/sway/
-sudo apt remove foot -y
-sudo apt install terminator -y
+sudo nala remove foot -y
+sudo nala install terminator -y
 
 
 # Add User directories
@@ -85,18 +85,18 @@ xdg-user-dirs-update
 
 
 # Good utils
-sudo apt install dialog mtools dosfstools avahi-daemon acpi acpid gvfs-backends -y
+sudo nala install dialog mtools dosfstools avahi-daemon acpi acpid gvfs-backends -y
 sudo systemctl enable avahi-daemon
 sudo systemctl enable acpid
 
 
 # Utils for average use (some are included in other sections)
-sudo apt install wlr-randr brightnessctl qt5ct qt6ct mesa-utils pciutils unrar unzip blueman synaptic timeshift kcalc tlp tlp-rdw tldr -y
+sudo nala install wlr-randr brightnessctl qt5ct qt6ct mesa-utils pciutils unrar unzip blueman synaptic timeshift kcalc tlp tlp-rdw tldr -y
 sudo systemctl enable tlp
 
 
 # Aesthetic (set Papirus and Adw-Gtk3 for the GTK theme to look like Libadwaita4)
-sudo apt install fonts-recommended fonts-ubuntu fonts-font-awesome fonts-terminus papirus-icon-theme -y
+sudo nala install fonts-recommended fonts-ubuntu fonts-font-awesome fonts-terminus papirus-icon-theme -y
 sudo wget https://github.com/lassekongo83/adw-gtk3/releases/download/v5.3/adw-gtk3v5.3.tar.xz
 sudo tar xvf adw-gtk3v5.3.tar.xz
 sudo rm adw-gtk3v5.3.tar.xz
@@ -110,13 +110,13 @@ gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 
 # Fastfetch hehe
 sudo wget https://github.com/fastfetch-cli/fastfetch/releases/download/2.11.0/fastfetch-linux-amd64.deb
-sudo apt install ./fastfetch-linux-amd64.deb -y
+sudo nala install ./fastfetch-linux-amd64.deb -y
 sudo rm fastfetch-linux-amd64.deb
 echo "alias neofetch='fastfetch -c neofetch'" >> $HOME/.bashrc
 
 
 # Flatpak setup + GNOME-Software as the store with Flatpak integration
-sudo apt install flatpak gnome-software gnome-software-plugin-flatpak xdg-desktop-portal qt5-flatpak-platformtheme -y
+sudo nala install flatpak gnome-software gnome-software-plugin-flatpak xdg-desktop-portal qt5-flatpak-platformtheme -y
 sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 
@@ -133,10 +133,10 @@ flatpak install io.github.flattool.Warehouse -y
 
 
 # Install standard utilities for daily use
-#sudo apt install vlc -y
-sudo apt install celluloid -y
-sudo apt install micro -y
-sudo apt install thunar fileroller -y
+#sudo nala install vlc -y
+sudo nala install celluloid -y
+sudo nala install micro -y
+sudo nala install thunar fileroller -y
 #flatpak install com.google.Chrome -y
 flatpak install org.onlyoffice.desktopeditors -y
 flatpak install com.github.d4nj1.tlpui -y
@@ -157,10 +157,43 @@ echo "export QT_QPA_PLATFORMTHEME=qt5ct" >> $HOME/.profile
 
 
 # Networking
-sudo apt install wpasupplicant wpagui -y
+sudo nala install wpasupplicant wpagui -y
+
+
+# If an NVIDIA GPU is detected, sets up the NVIDIA Driver
+if lspci | grep -i nvidia > /dev/null; then
+    if nvidia-smi; then
+        echo "You've got the NVIDIA drivers, alrighty!"
+        sleep 4
+    else
+        echo "It appears you have an NVIDIA GPU. I'll be taking some extra steps for your convenience!"
+        sleep 4
+
+        sudo apt install software-properties-common -y
+        sudo add-apt-repository contrib non-free-firmware -y
+        sudo apt install dirmngr ca-certificates apt-transport-https dkms curl -y
+
+        sudo curl -fSsL https://developer.download.nvidia.com/compute/cuda/repos/debian"$(lsb_release -sr 2>/dev/null)"/x86_64/3bf863cc.pub | sudo gpg --dearmor | sudo tee /usr/share/keyrings/nvidia-drivers.gpg > /dev/null 2>&1
+
+        echo "deb [signed-by=/usr/share/keyrings/nvidia-drivers.gpg] https://developer.download.nvidia.com/compute/cuda/repos/debian$(lsb_release -sr 2>/dev/null)/x86_64/ /" | sudo tee /etc/apt/sources.list.d/nvidia-drivers.list
+
+        sudo apt update -y
+        sudo apt install nvidia-driver nvidia-smi nvidia-settings -y
+
+        sudo mkdir -p /usr/share/wayland-sessions
+        sudo sed -i 's/quiet/quiet nvidia-drm.modeset=1/g' /etc/default/grub
+        sudo update-grub
+        echo "sway --unsupported-gpu" >> $HOME/.bashrc
+    fi
+else
+    echo "It seems you don't have an NVIDIA GPU. Good for you!"
+    echo "sway" >> $HOME/.bashrc
+    sleep 5
+fi
 
 
 # Final step
+clear
 read -p "We're done! Ready to reboot to your new system? (Y/n): " yn
 choice=$(echo "$yn" | tr '[:upper:]' '[:lower:]')
 
