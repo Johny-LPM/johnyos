@@ -3,6 +3,13 @@ cd $(dirname $0)
 ./debiansetup.sh "swaysetup.sh"
 
 
+
+# For some reason gnome-tweaks doesn't create a desktop file on its own outside GNOME, so we do it manually
+mkdir -p $HOME/.local/share/applications
+sudo echo -e "[Desktop Entry]\nName=GNOME-Tweaks\nExec=gnome-tweaks\nType=Application\nTerminal=false\nIcon=tweaks-app" > $HOME/.local/share/applications/gnometweaks.desktop
+chmod +x $HOME/.local/share/applications/gnometweaks.desktop
+
+
 # Policy Kit (required for some things, better keep)
 sudo apt install policykit-1 mate-polkit -y
 

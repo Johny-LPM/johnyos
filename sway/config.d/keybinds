@@ -18,13 +18,12 @@ bindsym Ctrl+$alt+t exec terminator
 
 
 # File manager (Dolphin)
-bindsym $super+f exec Dolphin
+bindsym $super+f exec thunar
 
 
 # Browser (Chrome)
 #bindsym $super+q exec flatpak run com.google.Chrome
-bindsym $super+q exec flatpak run com.brave.Browser
-
+bindsym $super+q exec flatpak run one.ablaze.floorp
 
 # Kill active window
 bindsym $alt+f4 kill
