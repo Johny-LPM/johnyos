@@ -11,15 +11,14 @@ clear
 echo "Superuser authentication check..."
 sudo echo "Authenticated. Proceeding."
 sleep 3
-sudo nala update -y
-sudo nala fetch --auto --non-free -y
-sudo nala upgrade -y
-sudo nala install figlet nala -y
+sudo apt update -y
+sudo apt upgrade -y
+sudo apt install figlet -y
 
 
 # ZRAM Setup (sets ZRAM to use 8GB, a good value overrall)
 # (PCs with )
-sudo nala install zram-tools -y
+sudo apt install zram-tools -y
 sudo sed -i 's/#SIZE=256/SIZE=8192/g' /etc/default/zramswap
 sudo sed -i 's/#ALGO=lz4/ALGO=lz4/g' /etc/default/zramswap
 sudo systemctl restart zramswap
@@ -36,14 +35,14 @@ else
     clear
     figlet -tc "I'LL UPDATE YOUR KERNEL NOW, BE READY TO LOGIN!"
     sleep 5
-    sudo nala install lsb-release software-properties-common apt-transport-https ca-certificates curl -y
+    sudo apt install lsb-release software-properties-common apt-transport-https ca-certificates curl -y
     sudo add-apt-repository contrib non-free-firmware non-free -y
 
     sudo curl -fSsL https://pkgs.zabbly.com/key.asc | gpg --dearmor | sudo tee /usr/share/keyrings/linux-zabbly.gpg > /dev/null
-    codename=$(lsb_release -sc 2>/dev/null) && echo deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/linux-zabbly.gpg] https://pkgs.zabbly.com/kernel/stable $codename main | sudo tee /etc/nala/sources.list.d/linux-zabbly.list
+    codename=$(lsb_release -sc 2>/dev/null) && echo deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/linux-zabbly.gpg] https://pkgs.zabbly.com/kernel/stable $codename main | sudo tee /etc/apt/sources.list.d/linux-zabbly.list
 
-    sudo nala update -y
-    sudo nala install linux-zabbly -y
+    sudo apt update -y
+    sudo apt install linux-zabbly -y
 
     echo "updated">kstat
 
@@ -59,7 +58,7 @@ fi
 
 
 # Pulseaudio/Pipewire stuff (a lot of the pipewire stuff comes with gnome-tweaks)
-sudo nala install pipewire wireplumber pulseaudio-utils pavucontrol pamixer gnome-tweaks -y
+sudo apt install pipewire wireplumber pulseaudio-utils pavucontrol pamixer gnome-tweaks -y
 
 
 # Add User directories
@@ -67,18 +66,18 @@ xdg-user-dirs-update
 
 
 # Good utils
-sudo nala install dialog mtools dosfstools avahi-daemon acpi acpid gvfs-backends -y
+sudo apt install dialog mtools dosfstools avahi-daemon acpi acpid gvfs-backends -y
 sudo systemctl enable avahi-daemon
 sudo systemctl enable acpid
 
 
 # Utils for average use (some are included in other sections)
-sudo nala install brightnessctl qt5ct qt6ct mesa-utils pciutils unrar unzip synaptic timeshift tlp tlp-rdw tldr -y
+sudo apt install brightnessctl qt5ct qt6ct mesa-utils pciutils unrar unzip synaptic timeshift tlp tlp-rdw tldr -y
 sudo systemctl enable tlp
 
 
 # Aesthetic (set Papirus and Adw-Gtk3 for the GTK theme to look like Libadwaita4)
-sudo nala install fonts-recommended fonts-ubuntu fonts-font-awesome fonts-terminus papirus-icon-theme -y
+sudo apt install fonts-recommended fonts-ubuntu fonts-font-awesome fonts-terminus papirus-icon-theme -y
 sudo wget https://github.com/lassekongo83/adw-gtk3/releases/download/v5.3/adw-gtk3v5.3.tar.xz
 sudo tar xvf adw-gtk3v5.3.tar.xz
 sudo rm adw-gtk3v5.3.tar.xz
@@ -92,13 +91,13 @@ gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 
 # Fastfetch hehe
 sudo wget https://github.com/fastfetch-cli/fastfetch/releases/download/2.11.0/fastfetch-linux-amd64.deb
-sudo nala install ./fastfetch-linux-amd64.deb -y
+sudo apt install ./fastfetch-linux-amd64.deb -y
 sudo rm fastfetch-linux-amd64.deb
 echo "alias neofetch='fastfetch -c neofetch'" >> $HOME/.bashrc
 
 
 # Flatpak setup
-sudo nala install flatpak xdg-desktop-portal qt5-flatpak-platformtheme -y
+sudo apt install flatpak xdg-desktop-portal qt5-flatpak-platformtheme -y
 sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
 
@@ -121,9 +120,9 @@ flatpak install it.mijorus.gearlever -y
 
 
 # Install standard utilities for daily use
-#sudo nala install vlc -y
-sudo nala install celluloid -y
-sudo nala install micro -y
+#sudo apt install vlc -y
+sudo apt install celluloid -y
+sudo apt install micro -y
 #flatpak install com.google.Chrome -y
 flatpak install org.onlyoffice.desktopeditors -y
 flatpak install com.github.d4nj1.tlpui -y
