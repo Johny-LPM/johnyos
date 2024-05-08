@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-script="debiansetup.sh"
+script="$1"
 
 # Change into the directory where the script is, to make sure everything is consistent
 cd $(dirname $0)
@@ -27,13 +27,13 @@ sudo systemctl restart zramswap
 # Checks for updated kernel, if it isn't proceeds to install Zabbly's kernel
 if [ "$(cat kstat)" == "updated" ]; then
     clear
-    figlet "You have the updated kernel, $(uname -r), we can proceed!"
+    figlet -tc "YOU HAVE THE UPDATED KERNEL, $(uname -r), WE CAN PROCEED!"
     sleep 5
     rm kstat
     sed -i '$d' $HOME/.bashrc
 else
     clear
-    figlet "I'll update your kernel now, be ready to login!"
+    figlet -tc "I'LL UPDATE YOUR KERNEL NOW, BE READY TO LOGIN!"
     sleep 5
     sudo apt install lsb-release software-properties-common apt-transport-https ca-certificates curl -y
 
@@ -49,7 +49,7 @@ else
     echo "$(pwd)/$script" >> $HOME/.bashrc
 
     clear
-    figlet "Time to reboot, get ready!"
+    figlet -tc "TIME TO REBOOT, GET READY!"
     sleep 4
     sudo reboot
     exit 1

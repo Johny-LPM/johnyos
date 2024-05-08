@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 cd $(dirname $0)
-./debiansetup.sh
+./debiansetup.sh "swaysetup.sh"
 
 
 # Policy Kit (required for some things, better keep)

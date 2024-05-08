@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 cd $(dirname $0)
-./debiansetup.sh
+./debiansetup.sh "gnomesetup.sh"
 
 
 # Install minimal GNOME
