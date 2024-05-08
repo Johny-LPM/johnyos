@@ -20,17 +20,13 @@ if lspci | grep -i nvidia > /dev/null; then
         echo "deb [signed-by=/usr/share/keyrings/nvidia-drivers.gpg] https://developer.download.nvidia.com/compute/cuda/repos/debian$(lsb_release -sr 2>/dev/null)/x86_64/ /" | sudo tee /etc/apt/sources.list.d/nvidia-drivers.list
 
         sudo apt update -y
-        sudo apt install nvidia-driver nvidia-smi nvidia-settings nvidia-suspend-common -y
+        sudo apt install nvidia-driver nvidia-smi nvidia-settings -y
 
-        sudo systemctl enable nvidia-suspend
-        sudo systemctl enable nvidia-hibernate
-        sudo systemctl enable nvidia-resume
-
-        sudo echo 'options nvidia NVreg_PreserveVideoMemoryAllocations=1' > /etc/modprobe.d/nvidia-power-management.conf
+        #sudo echo 'options nvidia NVreg_PreserveVideoMemoryAllocations=1' | sudo tee /etc/modprobe.d/nvidia-power-management.conf
 
         sudo sed -i 's/quiet/quiet nvidia-drm.modeset=1/g' /etc/default/grub
         # GDM Fix for Wayland sessions with NVIDIA
-        sudo ln -s /dev/null /etc/udev/rules.d/61-gdm.rules
+        #sudo ln -s /dev/null /etc/udev/rules.d/61-gdm.rules
         sudo update-grub
     fi
 else

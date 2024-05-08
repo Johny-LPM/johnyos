@@ -36,6 +36,7 @@ sudo apt install wpasupplicant wpagui -y
 
 
 # Final step
+sudo apt autoremove -y
 clear
 figlet -tc "WE'RE DONE! READY TO REBOOT TO YOU NEW SYSTEM?"
 read -p "(Y/n): " yn

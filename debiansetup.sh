@@ -113,10 +113,10 @@ sudo flatpak override --env=ICON_THEME=Papirus-Dark
 
 
 # Flatpak utils
-flatpak install com.github.tchx84.Flatseal -y
-flatpak install io.github.flattool.Warehouse -y
+#flatpak install com.github.tchx84.Flatseal -y
+#flatpak install io.github.flattool.Warehouse -y
 # And for AppImage
-flatpak install it.mijorus.gearlever -y
+#flatpak install it.mijorus.gearlever -y
 
 
 # Install standard utilities for daily use
@@ -124,16 +124,16 @@ flatpak install it.mijorus.gearlever -y
 sudo apt install celluloid -y
 sudo apt install micro -y
 #flatpak install com.google.Chrome -y
-flatpak install org.onlyoffice.desktopeditors -y
-flatpak install com.github.d4nj1.tlpui -y
+#flatpak install org.onlyoffice.desktopeditors -y
+#flatpak install com.github.d4nj1.tlpui -y
 
 
 # Optional (my personal configuration)
-flatpak install one.ablaze.floorp -y
-flatpak install com.valvesoftware.Steam -y
-flatpak install net.lutris.Lutris -y
-flatpak install com.heroicgameslauncher.hgl -y
-flatpak install page.kramo.Cartridges -y
+#flatpak install one.ablaze.floorp -y
+#flatpak install com.valvesoftware.Steam -y
+#flatpak install net.lutris.Lutris -y
+#flatpak install com.heroicgameslauncher.hgl -y
+#flatpak install page.kramo.Cartridges -y
 
 
 # Set a few environment variables
