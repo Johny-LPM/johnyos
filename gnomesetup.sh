@@ -25,6 +25,8 @@ gnome-extensions enable user-theme@gnome-shell-extensions.gcampax.github.com
 gnome-extensions enable screenshot-window-sizer@gnome-shell-extensions.gcampax.github.com
 gnome-extensions enable window-app-switcher-on-active-monitor@NiKnights.com
 gnome-extensions enable blur-my-shell@aunetx
+gnome-extensions enable unblank@sun.wxg@gmail.com
+
 gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
 gsettings set org.gnome.shell.app-switcher current-workspace-only true
 gsettings set org.gnome.shell.window-switcher current-workspace-only true

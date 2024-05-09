@@ -2,3 +2,4 @@ https://extensions.gnome.org/extension/3193/blur-my-shell/
 https://extensions.gnome.org/extension/5568/monitor-window-switcher-2/
 https://extensions.gnome.org/extension/7/removable-drive-menu/
 https://extensions.gnome.org/extension/28/gtile/
+https://extensions.gnome.org/extension/1414/unblank/
