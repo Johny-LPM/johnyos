@@ -30,6 +30,7 @@ gsettings set org.gnome.shell.app-switcher current-workspace-only true
 gsettings set org.gnome.shell.window-switcher current-workspace-only true
 gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize,close"
 gsettings set org.gnome.shell favorite-apps "['floorp.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.tweaks.desktop', 'org.gnome.Settings.desktop', 'org.gnome.Terminal.desktop']"
+gsettings set org.gnome.settings-daemon.plugins.power power-button-action 'interactive'
 
 # NVIDIA Check and Setup
 ./nvidiasetup.sh
