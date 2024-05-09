@@ -11,7 +11,7 @@ if lspci | grep -i nvidia > /dev/null; then
         echo "It appears you have an NVIDIA GPU. I'll be taking some extra steps for your convenience!"
         sleep 4
 
-        sudo apt install software-properties-common -y
+        sudo apt install gcc make software-properties-common -y
         #sudo add-apt-repository contrib non-free-firmware non-free -y
         #sudo apt install dirmngr ca-certificates apt-transport-https dkms curl -y
 
