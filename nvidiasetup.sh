@@ -20,18 +20,17 @@ if lspci | grep -i nvidia > /dev/null; then
         echo "deb [signed-by=/usr/share/keyrings/nvidia-drivers.gpg] https://developer.download.nvidia.com/compute/cuda/repos/debian$(lsb_release -sr 2>/dev/null)/x86_64/ /" | sudo tee /etc/apt/sources.list.d/nvidia-drivers.list
 
         sudo apt update -y
-        sudo apt install nvidia-driver nvidia-smi nvidia-settings xwayland libxcb1 libnvidia-egl-wayland1 -y
-        gsettings set org.gnome.mutter experimental-features [\"kms-modifiers\"]
+        sudo apt install nvidia-driver nvidia-smi cuda nvidia-kernel-open-dkms nvidia-settings xwayland libxcb1 libnvidia-egl-wayland1 -y
 
-        #sudo echo 'options nvidia NVreg_PreserveVideoMemoryAllocations=1' | sudo tee /etc/modprobe.d/nvidia-power-management.conf
-
-        sudo sed -i 's/quiet/quiet rd.driver.blacklist=nouveau nvidia-drm.modeset=1/g' /etc/default/grub
+        sudo sed -i 's/quiet/quiet initcall_blacklist=simpledrm_platform_driver_init rd.driver.blacklist=nouveau nvidia-drm.modeset=1/g' /etc/default/grub
+        sudo update-initramfs -u 
+        
         # GDM Fix for Wayland sessions with NVIDIA
-        #sudo ln -s /dev/null /etc/udev/rules.d/61-gdm.rules
-        sudo update-grub
+        sudo mv /etc/udev/rules.d/61-gdm.rules /etc/udev/rules.d/61-gdm.rules.bak
+        sudo update-grub2
     fi
 else
     clear
     echo "It seems you don't have an NVIDIA GPU. Good for you!"
-    sleep 5
+    sleep 4
 fi
