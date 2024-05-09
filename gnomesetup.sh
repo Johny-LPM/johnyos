@@ -5,11 +5,12 @@ cd $(dirname $0)
 
 # Install minimal GNOME
 sudo apt install gnome-core firefox-esr gnome-shell-extension-manager gnome-shell-extension-dashtodock gnome-shell-extension-desktop-icons-ng gnome-shell-extension-bluetooth-quick-connect gnome-shell-extension-appindicator gnome-shell-extension-gsconnect gnome-shell-extension-gsconnect-browsers gnome-shell-extension-caffeine gnome-shell-extension-no-annoyance gnome-shell-extension-panel-osd gnome-shell-extension-tiling-assistant curl wget jq dconf-editor gnome-software gnome-software-plugin-flatpak -y
+sudo apt remove firefox-esr
 
 
 # Use ToasterUwU's tool to install a few more extensions not in the repos
 sudo wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh && chmod +x install-gnome-extensions.sh
-sudo ./install-gnome-extensions.sh --enable --file extensions.txt
+./install-gnome-extensions.sh --enable --file extensions.txt
 gnome-extensions enable dash-to-dock@micxgx.gmail.com
 gnome-extensions enable drive-menu@gnome-shell-extensions.gcampax.github.com
 gnome-extensions enable tiling-assistant@leleat-on-github
@@ -27,10 +28,12 @@ gnome-extensions enable blur-my-shell@aunetx
 gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
 gsettings set org.gnome.shell.app-switcher current-workspace-only true
 gsettings set org.gnome.shell.window-switcher current-workspace-only true
+gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize,close"
 
 # NVIDIA Check and Setup
 ./nvidiasetup.sh
-sudo sed -i 's/DRIVER="nvidia",/#DRIVER="nvidia",/g' /usr/lib/udev/rules.d/61-gdm.rules
+sudo mv /usr/lib/udev/rules.d/61-gdm.rules /usr/lib/udev/rules.d/61-gdm.rules.bak
+sudo update-grub2
 
 # Final step
 sudo apt autoremove -y

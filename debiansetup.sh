@@ -120,6 +120,12 @@ sudo flatpak override --env=ICON_THEME=Papirus-Dark
 
 
 # Install standard utilities for daily use
+# Floorp as the default browser
+sudo curl -fsSL https://ppa.ablaze.one/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/Floorp.gpg
+sudo curl -sS --compressed -o /etc/apt/sources.list.d/Floorp.list 'https://ppa.ablaze.one/Floorp.list'
+sudo apt update -y
+sudo apt install floorp -y
+
 #sudo apt install vlc -y
 sudo apt install celluloid -y
 sudo apt install micro -y
