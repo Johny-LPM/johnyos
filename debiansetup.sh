@@ -141,6 +141,8 @@ sudo apt install micro -y
 #flatpak install com.heroicgameslauncher.hgl -y
 #flatpak install page.kramo.Cartridges -y
 
+sudo apt remove zutty -y
+sudo apt autoremove -y
 
 # Set a few environment variables
 echo "export MOZ_ENABLE_WAYLAND=1" >> $HOME/.profile

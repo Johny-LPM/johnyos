@@ -4,7 +4,7 @@ cd $(dirname $0)
 
 
 # Install minimal GNOME
-sudo apt install gnome-core firefox-esr gnome-shell-extension-manager gnome-shell-extension-dashtodock gnome-shell-extension-desktop-icons-ng gnome-shell-extension-bluetooth-quick-connect gnome-shell-extension-appindicator gnome-shell-extension-gsconnect gnome-shell-extension-gsconnect-browsers gnome-shell-extension-caffeine gnome-shell-extension-no-annoyance gnome-shell-extension-panel-osd gnome-shell-extension-tiling-assistant curl wget jq dconf-editor gnome-software gnome-software-plugin-flatpak -y
+sudo apt install gnome-core alacarte firefox-esr gnome-shell-extension-manager gnome-shell-extension-dashtodock gnome-shell-extension-desktop-icons-ng gnome-shell-extension-bluetooth-quick-connect gnome-shell-extension-appindicator gnome-shell-extension-gsconnect gnome-shell-extension-gsconnect-browsers gnome-shell-extension-caffeine gnome-shell-extension-no-annoyance gnome-shell-extension-panel-osd gnome-shell-extension-tiling-assistant curl wget jq dconf-editor gnome-software gnome-software-plugin-flatpak -y
 sudo apt remove firefox-esr
 
 
@@ -29,6 +29,7 @@ gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
 gsettings set org.gnome.shell.app-switcher current-workspace-only true
 gsettings set org.gnome.shell.window-switcher current-workspace-only true
 gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize,close"
+gsettings set org.gnome.shell favorite-apps "['floorp.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.tweaks.desktop', 'org.gnome.Settings.desktop', 'org.gnome.Terminal.desktop']"
 
 # NVIDIA Check and Setup
 ./nvidiasetup.sh
