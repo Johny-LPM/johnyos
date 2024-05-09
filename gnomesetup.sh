@@ -9,7 +9,8 @@ sudo apt remove firefox-esr
 
 
 # Use ToasterUwU's tool to install a few more extensions not in the repos
-sudo wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh && chmod +x install-gnome-extensions.sh
+sudo wget "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" 
+chmod +x install-gnome-extensions.sh
 ./install-gnome-extensions.sh --enable --file extensions.txt
 gnome-extensions enable dash-to-dock@micxgx.gmail.com
 gnome-extensions enable drive-menu@gnome-shell-extensions.gcampax.github.com

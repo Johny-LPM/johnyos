@@ -27,22 +27,25 @@ sudo systemctl restart zramswap
 # Checks for updated kernel, if it isn't proceeds to install Zabbly's kernel
 if [ "$(cat kstat)" == "updated" ]; then
     clear
-    figlet -tc "YOU HAVE THE UPDATED KERNEL, $(uname -r), WE CAN PROCEED!"
+    figlet -tc "YOU HAVE UPDATED THE SYSTEM, WE CAN PROCEED!"
     sleep 5
     rm kstat
     sed -i '$d' $HOME/.bashrc
 else
     clear
-    figlet -tc "I'LL UPDATE YOUR KERNEL NOW, BE READY TO LOGIN!"
+    figlet -tc "I'LL UPDATE YOUR SYSTEM NOW, BE READY TO LOGIN!"
     sleep 5
+    sudo sed -i 's/bookworm/trixie/g' /etc/apt/sources.list
+    sudo apt update -y
+    sudo apt upgrade -y
     sudo apt install lsb-release software-properties-common apt-transport-https ca-certificates curl -y
     sudo add-apt-repository contrib non-free-firmware non-free -y
 
-    sudo curl -fSsL https://pkgs.zabbly.com/key.asc | gpg --dearmor | sudo tee /usr/share/keyrings/linux-zabbly.gpg > /dev/null
-    codename=$(lsb_release -sc 2>/dev/null) && echo deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/linux-zabbly.gpg] https://pkgs.zabbly.com/kernel/stable $codename main | sudo tee /etc/apt/sources.list.d/linux-zabbly.list
+    #sudo curl -fSsL https://pkgs.zabbly.com/key.asc | gpg --dearmor | sudo tee /usr/share/keyrings/linux-zabbly.gpg > /dev/null
+    #codename=$(lsb_release -sc 2>/dev/null) && echo deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/linux-zabbly.gpg] https://pkgs.zabbly.com/kernel/stable $codename main | sudo tee /etc/apt/sources.list.d/linux-zabbly.list
 
-    sudo apt update -y
-    sudo apt install linux-zabbly -y
+    #sudo apt update -y
+    #sudo apt install linux-zabbly -y
 
     echo "updated">kstat
 

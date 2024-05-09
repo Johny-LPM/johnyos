@@ -11,7 +11,7 @@ if lspci | grep -i nvidia > /dev/null; then
         echo "It appears you have an NVIDIA GPU. I'll be taking some extra steps for your convenience!"
         sleep 4
 
-        sudo apt install gcc make software-properties-common -y
+        sudo apt install gcc make software-properties-common xwayland libxcb1 libnvidia-egl-wayland1 -y
         #sudo add-apt-repository contrib non-free-firmware non-free -y
         #sudo apt install dirmngr ca-certificates apt-transport-https dkms curl -y
 
@@ -20,12 +20,10 @@ if lspci | grep -i nvidia > /dev/null; then
         #echo "deb [signed-by=/usr/share/keyrings/nvidia-drivers.gpg] https://developer.download.nvidia.com/compute/cuda/repos/debian$(lsb_release -sr 2>/dev/null)/x86_64/ /" | sudo tee /etc/apt/sources.list.d/nvidia-drivers.list
 
         #sudo apt update -y
-        #sudo apt install nvidia-driver nvidia-smi cuda nvidia-kernel-open-dkms nvidia-settings xwayland libxcb1 libnvidia-egl-wayland1 -y
+        #sudo apt install nvidia-driver nvidia-smi nvidia-settings -y
 
-        #sudo sed -i 's/quiet/quiet initcall_blacklist=simpledrm_platform_driver_init rd.driver.blacklist=nouveau nvidia-drm.modeset=1/g' /etc/default/grub
-        #sudo update-initramfs -u 
-        
-        # GDM Fix for Wayland sessions with NVIDIA
+        sudo sed -i 's/quiet/quiet initcall_blacklist=simpledrm_platform_driver_init rd.driver.blacklist=nouveau nvidia-drm.modeset=1/g' /etc/default/grub
+        sudo update-initramfs -u
         
         wget https://us.download.nvidia.com/XFree86/Linux-x86_64/550.78/NVIDIA-Linux-x86_64-550.78.run && sudo sh NVIDIA-Linux-x86_64-550.78.run
        
