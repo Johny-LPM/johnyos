@@ -9,16 +9,24 @@ sudo apt install gnome-core firefox-esr gnome-shell-extension-manager gnome-shel
 
 # Use ToasterUwU's tool to install a few more extensions not in the repos
 sudo wget -N -q "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" -O ./install-gnome-extensions.sh && chmod +x install-gnome-extensions.sh
-./install-gnome-extensions.sh --enable --file extensions.txt
-gnome-extensions enable dash-to-dock@$HOSTNAME
-gnome-extensions enable removable-drive-menu@$HOSTNAME
-gnome-extensions enable gtile@$HOSTNAME
-gnome-extensions enable blur-my-shell@$HOSTNAME
-gnome-extensions enable desktop-icons-ng-ding@$HOSTNAME
-gnome-extensions enable gsconnect@$HOSTNAME
-gnome-extensions enable noannoyance@$HOSTNAME
-gnome-extensions enable bluetooth-quick-connect@$HOSTNAME
-gnome-extensions enable appindicator-support@$HOSTNAME
+sudo ./install-gnome-extensions.sh --enable --file extensions.txt
+gnome-extensions enable dash-to-dock@micxgx.gmail.com
+gnome-extensions enable drive-menu@gnome-shell-extensions.gcampax.github.com
+gnome-extensions enable tiling-assistant@leleat-on-github
+gnome-extensions enable launch-new-instance@gnome-shell-extensions.gcampax.github.com
+gnome-extensions enable ding@rastersoft.com
+gnome-extensions enable gsconnect@andyholmes.github.io
+gnome-extensions enable noannoyance@daase.net
+gnome-extensions enable bluetooth-quick-connect@bjarosze.gmail.com
+gnome-extensions enable ubuntu-appindicators@ubuntu.com
+gnome-extensions enable workspace-indicator@gnome-shell-extensions.gcampax.github.com
+gnome-extensions enable user-theme@gnome-shell-extensions.gcampax.github.com
+gnome-extensions enable screenshot-window-sizer@gnome-shell-extensions.gcampax.github.com
+gnome-extensions enable window-app-switcher-on-active-monitor@NiKnights.com
+gnome-extensions enable blur-my-shell@aunetx
+gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
+gsettings set org.gnome.shell.app-switcher current-workspace-only true
+gsettings set org.gnome.shell.window-switcher current-workspace-only true
 
 # NVIDIA Check and Setup
 ./nvidiasetup.sh
