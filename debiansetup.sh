@@ -27,7 +27,7 @@ sudo systemctl restart zramswap
 # Checks for updated kernel, if it isn't proceeds to install Zabbly's kernel
 if [ "$(cat kstat)" == "updated" ]; then
     clear
-    figlet -tc "YOU HAVE UPDATED THE SYSTEM, WE CAN PROCEED!"
+    figlet -tc "YOU HAVE UPDATED THE SYSTEM, NOW WITH KERNEL $(uname -r), WE CAN PROCEED!"
     sleep 5
     rm kstat
     sed -i '$d' $HOME/.bashrc
@@ -35,26 +35,26 @@ else
     clear
     figlet -tc "I'LL UPDATE YOUR SYSTEM NOW, BE READY TO LOGIN!"
     sleep 5
-    sudo sed -i 's/bookworm/trixie/g' /etc/apt/sources.list
-    sudo apt update -y
-    sudo apt upgrade -y
+    #sudo sed -i 's/bookworm/trixie/g' /etc/apt/sources.list
+    #sudo apt update -y
+    #sudo apt upgrade -y
     sudo apt install lsb-release software-properties-common apt-transport-https ca-certificates curl -y
     sudo add-apt-repository contrib non-free-firmware non-free -y
 
-    #sudo curl -fSsL https://pkgs.zabbly.com/key.asc | gpg --dearmor | sudo tee /usr/share/keyrings/linux-zabbly.gpg > /dev/null
-    #codename=$(lsb_release -sc 2>/dev/null) && echo deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/linux-zabbly.gpg] https://pkgs.zabbly.com/kernel/stable $codename main | sudo tee /etc/apt/sources.list.d/linux-zabbly.list
+    sudo curl -fSsL https://pkgs.zabbly.com/key.asc | gpg --dearmor | sudo tee /usr/share/keyrings/linux-zabbly.gpg > /dev/null
+    codename=$(lsb_release -sc 2>/dev/null) && echo deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/linux-zabbly.gpg] https://pkgs.zabbly.com/kernel/stable $codename main | sudo tee /etc/apt/sources.list.d/linux-zabbly.list
 
-    #sudo apt update -y
-    #sudo apt install linux-zabbly -y
+    sudo apt update -y
+    sudo apt install linux-zabbly -y
 
     echo "updated">kstat
 
-    # Add this script to autostart
+    # Add the script that launched this one (provided it was launched like so) to autostart
     echo "$(pwd)/$script" >> $HOME/.bashrc
 
     clear
-    figlet -tc "TIME TO REBOOT, GET READY!"
-    sleep 4
+    figlet -tc "TIME TO REBOOT, WHENEVER YOU'RE READY JUST PRESS ENTER!"
+    read nothing
     sudo reboot
     exit 1
 fi
@@ -102,10 +102,9 @@ echo "alias neofetch='fastfetch -c neofetch'" >> $HOME/.bashrc
 # Flatpak setup
 sudo apt install flatpak xdg-desktop-portal qt5-flatpak-platformtheme -y
 sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-
-
-# Ptyxis as the container-focused terminal
-#flatpak install --user --from https://nightly.gnome.org/repo/appstream/org.gnome.Ptyxis.Devel.flatpakref -y
+mkdir -p $HOME/.config/autostart
+echo -e "[Desktop Entry]\nName=FlatpaksInstall\nExec=$(pwd)/flatpaksinstall.sh\nType=Application\nTerminal=true" > $HOME/.config/autostart/flatpaksinstall.desktop
+chmod +x $HOME/.config/autostart/flatpaksinstall.desktop
 
 
 # Aesthetic for Flatpaks
@@ -115,13 +114,6 @@ sudo flatpak override --env=GTK_THEME=adw-gtk3-dark
 sudo flatpak override --env=ICON_THEME=Papirus-Dark
 
 
-# Flatpak utils
-#flatpak install com.github.tchx84.Flatseal -y
-#flatpak install io.github.flattool.Warehouse -y
-# And for AppImage
-#flatpak install it.mijorus.gearlever -y
-
-
 # Install standard utilities for daily use
 # Floorp as the default browser
 sudo curl -fsSL https://ppa.ablaze.one/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/Floorp.gpg
@@ -129,23 +121,12 @@ sudo curl -sS --compressed -o /etc/apt/sources.list.d/Floorp.list 'https://ppa.a
 sudo apt update -y
 sudo apt install floorp -y
 
-#sudo apt install vlc -y
 sudo apt install celluloid -y
 sudo apt install micro -y
-#flatpak install com.google.Chrome -y
-#flatpak install org.onlyoffice.desktopeditors -y
-#flatpak install com.github.d4nj1.tlpui -y
-
-
-# Optional (my personal configuration)
-#flatpak install one.ablaze.floorp -y
-#flatpak install com.valvesoftware.Steam -y
-#flatpak install net.lutris.Lutris -y
-#flatpak install com.heroicgameslauncher.hgl -y
-#flatpak install page.kramo.Cartridges -y
 
 sudo apt remove zutty -y
 sudo apt autoremove -y
+
 
 # Set a few environment variables
 echo "export MOZ_ENABLE_WAYLAND=1" >> $HOME/.profile

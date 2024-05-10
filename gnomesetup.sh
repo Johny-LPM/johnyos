@@ -5,38 +5,32 @@ cd $(dirname $0)
 
 # Install minimal GNOME
 sudo apt install gnome-core alacarte firefox-esr gnome-shell-extension-manager gnome-shell-extension-dashtodock gnome-shell-extension-desktop-icons-ng gnome-shell-extension-bluetooth-quick-connect gnome-shell-extension-appindicator gnome-shell-extension-gsconnect gnome-shell-extension-gsconnect-browsers gnome-shell-extension-caffeine gnome-shell-extension-no-annoyance gnome-shell-extension-panel-osd gnome-shell-extension-tiling-assistant curl wget jq dconf-editor gnome-software gnome-software-plugin-flatpak -y
-sudo apt remove firefox-esr
+sudo apt remove firefox-esr -y
 
+# Use the extensions from the preselected gnome-extensions folder
+gnome-extensions install gnome-extensions/blur-my-shell.zip
+gnome-extensions install gnome-extensions/compiz.zip
+gnome-extensions install gnome-extensions/drive-menu.zip
+gnome-extensions install gnome-extensions/fix-tearing.zip
+gnome-extensions install gnome-extensions/gtile.zip
+gnome-extensions install gnome-extensions/unblank.zip
+gnome-extensions install gnome-extensions/window-switcher.zip
 
-# Use ToasterUwU's tool to install a few more extensions not in the repos
-sudo wget "https://raw.githubusercontent.com/ToasterUwU/install-gnome-extensions/master/install-gnome-extensions.sh" 
-chmod +x install-gnome-extensions.sh
-./install-gnome-extensions.sh --enable --file extensions.txt
-gnome-extensions enable dash-to-dock@micxgx.gmail.com
-gnome-extensions enable drive-menu@gnome-shell-extensions.gcampax.github.com
-gnome-extensions enable tiling-assistant@leleat-on-github
-gnome-extensions enable launch-new-instance@gnome-shell-extensions.gcampax.github.com
-gnome-extensions enable ding@rastersoft.com
-gnome-extensions enable gsconnect@andyholmes.github.io
-gnome-extensions enable noannoyance@daase.net
-gnome-extensions enable bluetooth-quick-connect@bjarosze.gmail.com
-gnome-extensions enable ubuntu-appindicators@ubuntu.com
-gnome-extensions enable workspace-indicator@gnome-shell-extensions.gcampax.github.com
-gnome-extensions enable user-theme@gnome-shell-extensions.gcampax.github.com
-gnome-extensions enable screenshot-window-sizer@gnome-shell-extensions.gcampax.github.com
-gnome-extensions enable window-app-switcher-on-active-monitor@NiKnights.com
-gnome-extensions enable blur-my-shell@aunetx
-gnome-extensions enable unblank@sun.wxg@gmail.com
+# Enable the extensions considered more useful for a new user OOTB
+echo -e "[Desktop Entry]\nName=ExtensionsEnable\nExec=$(pwd)/extensionsenable.sh\nType=Application\nTerminal=false" > $HOME/.config/autostart/extensionsenable.desktop
+sudo chmod +x $HOME/.config/autostart/extensionsenable.desktop
 
+# Enable a bunch of settings that make it a better OOTB experience
 gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
 gsettings set org.gnome.shell.app-switcher current-workspace-only true
 gsettings set org.gnome.shell.window-switcher current-workspace-only true
 gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize,close"
-gsettings set org.gnome.shell favorite-apps "['floorp.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.tweaks.desktop', 'org.gnome.Settings.desktop', 'org.gnome.Terminal.desktop']"
+gsettings set org.gnome.shell favorite-apps "['floorp.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'org.gnome.tweaks.desktop', 'org.gnome.Settings.desktop']"
 gsettings set org.gnome.settings-daemon.plugins.power power-button-action 'interactive'
 
 # NVIDIA Check and Setup
 ./nvidiasetup.sh
+# GDM Fix for allowing Wayland sessions on some NVIDIA devices
 sudo mv /usr/lib/udev/rules.d/61-gdm.rules /usr/lib/udev/rules.d/61-gdm.rules.bak
 sudo update-grub2
 

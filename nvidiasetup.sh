@@ -26,6 +26,7 @@ if lspci | grep -i nvidia > /dev/null; then
         sudo update-initramfs -u
         
         wget https://us.download.nvidia.com/XFree86/Linux-x86_64/550.78/NVIDIA-Linux-x86_64-550.78.run && sudo sh NVIDIA-Linux-x86_64-550.78.run
+        rm NVIDIA-Linux-x86_64-550.78.run
        
     fi
 else
