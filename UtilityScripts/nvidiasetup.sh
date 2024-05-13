@@ -23,10 +23,10 @@ if lspci | grep -i nvidia > /dev/null; then
         #sudo apt install nvidia-driver nvidia-smi nvidia-settings -y
 
         sudo sed -i 's/quiet/quiet initcall_blacklist=simpledrm_platform_driver_init rd.driver.blacklist=nouveau nvidia-drm.modeset=1/g' /etc/default/grub
-        sudo update-initramfs -u
         
         wget https://us.download.nvidia.com/XFree86/Linux-x86_64/550.78/NVIDIA-Linux-x86_64-550.78.run && sudo sh NVIDIA-Linux-x86_64-550.78.run
         rm NVIDIA-Linux-x86_64-550.78.run
+        sudo update-initramfs -u
        
     fi
 else

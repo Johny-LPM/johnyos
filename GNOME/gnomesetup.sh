@@ -1,18 +1,21 @@
 #!/usr/bin/env bash
 cd $(dirname $0)
-./debiansetup.sh "gnomesetup.sh"
+../UtilityScripts/debiansetup.sh "$(pwd)/gnomesetup.sh"
+cd $(dirname $0)
 
 
 # Install minimal GNOME
-sudo apt install gnome-core alacarte firefox-esr gnome-shell-extension-manager gnome-shell-extension-dashtodock gnome-shell-extension-desktop-icons-ng gnome-shell-extension-bluetooth-quick-connect gnome-shell-extension-appindicator gnome-shell-extension-gsconnect gnome-shell-extension-gsconnect-browsers gnome-shell-extension-caffeine gnome-shell-extension-no-annoyance gnome-shell-extension-panel-osd gnome-shell-extension-tiling-assistant curl wget jq dconf-editor gnome-software gnome-software-plugin-flatpak -y
+sudo apt install gnome-core alacarte gnome-shell-extension-manager gnome-shell-extension-dashtodock gnome-shell-extension-desktop-icons-ng gnome-shell-extension-bluetooth-quick-connect gnome-shell-extension-appindicator gnome-shell-extension-gsconnect gnome-shell-extension-gsconnect-browsers gnome-shell-extension-caffeine gnome-shell-extension-no-annoyance gnome-shell-extension-panel-osd gnome-shell-extension-tiling-assistant curl wget jq dconf-editor gnome-software gnome-software-plugin-flatpak -y
 sudo apt remove firefox-esr -y
 
 # Use the extensions from the preselected gnome-extensions folder
 gnome-extensions install gnome-extensions/blur-my-shell.zip
 gnome-extensions install gnome-extensions/compiz.zip
+gnome-extensions install gnome-extensions/custom-hot-corners.zip
 gnome-extensions install gnome-extensions/drive-menu.zip
 gnome-extensions install gnome-extensions/fix-tearing.zip
-gnome-extensions install gnome-extensions/gtile.zip
+gnome-extensions install gnome-extensions/forge.zip
+gnome-extensions install gnome-extensions/just-perfection.zip
 gnome-extensions install gnome-extensions/unblank.zip
 gnome-extensions install gnome-extensions/window-switcher.zip
 
@@ -29,7 +32,7 @@ gsettings set org.gnome.shell favorite-apps "['floorp.desktop', 'org.gnome.Softw
 gsettings set org.gnome.settings-daemon.plugins.power power-button-action 'interactive'
 
 # NVIDIA Check and Setup
-./nvidiasetup.sh
+../UtilityScripts/nvidiasetup.sh
 # GDM Fix for allowing Wayland sessions on some NVIDIA devices
 sudo mv /usr/lib/udev/rules.d/61-gdm.rules /usr/lib/udev/rules.d/61-gdm.rules.bak
 sudo update-grub2

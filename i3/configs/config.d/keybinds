@@ -1,0 +1,107 @@
+set $super Mod4
+set $alt Mod1
+
+# Custom (add your entries here, and you can change the current ones as you please)
+
+
+# Reload the configuration file
+bindsym $super+Shift+r reload; exec notify-send -t 2000 'Reloaded'
+
+
+# Exit sway (logs you out of your Wayland session)
+bindsym $super+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+
+
+# Terminal (Ptyxis/Terminator)
+bindsym $super+t exec flatpak run org.gnome.Ptyxis.Devel -s
+bindsym Ctrl+$alt+t exec terminator
+
+
+# File manager (Dolphin)
+bindsym $super+f exec thunar
+
+
+# Browser (Chrome)
+#bindsym $super+q exec flatpak run com.google.Chrome
+bindsym $super+q exec flatpak run one.ablaze.floorp
+
+# Kill active window
+bindsym $alt+f4 kill
+
+
+# Start your launcher (wofi)
+bindsym --release Super_L exec pgrep wofi >/dev/null 2>&1 && killall wofi || wofi --show=drun --allow-images --sort-order=alphabetical --gtk-dark
+
+
+# Screen Capture
+bindsym Print exec grim ~/Pictures/$(date +"%Y-%m-%d_%H-%M-%S").png; exec notify-send 'Grim' 'Image saved to ~/Pictures'
+bindsym $super+Print exec grim -g "$(slurp)" ~/Pictures/$(date +"%Y-%m-%d_%H-%M-%S").png; exec notify-send 'Grim' 'Selected image saved to ~/Pictures'
+
+
+# Brightness control
+bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+
+
+# Volume control
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+
+
+# Change focus of windows
+bindsym $super+Left focus left
+bindsym $super+Down focus down
+bindsym $super+Up focus up
+bindsym $super+Right focus right
+
+
+# Move the focused window with the same, but add Shift
+bindsym $super+Shift+Left move left
+bindsym $super+Shift+Down move down
+bindsym $super+Shift+Up move up
+bindsym $super+Shift+Right move right
+
+
+# Switch to workspace
+bindsym $super+1 workspace number 1
+bindsym $super+2 workspace number 2
+bindsym $super+3 workspace number 3
+bindsym $super+4 workspace number 4
+bindsym $super+5 workspace number 5
+bindsym $super+6 workspace number 6
+bindsym $super+7 workspace number 7
+bindsym $super+8 workspace number 8
+bindsym $super+9 workspace number 9
+bindsym $super+0 workspace number 10
+
+
+# Move focused container to workspace
+bindsym $super+Shift+1 move container to workspace number 1
+bindsym $super+Shift+2 move container to workspace number 2
+bindsym $super+Shift+3 move container to workspace number 3
+bindsym $super+Shift+4 move container to workspace number 4
+bindsym $super+Shift+5 move container to workspace number 5
+bindsym $super+Shift+6 move container to workspace number 6
+bindsym $super+Shift+7 move container to workspace number 7
+bindsym $super+Shift+8 move container to workspace number 8
+bindsym $super+Shift+9 move container to workspace number 9
+bindsym $super+Shift+0 move container to workspace number 10
+## Note: workspaces can have any name you want, not just numbers. This is just the default.
+
+
+# Move forward and backward (like the window switcher with Alt+Tab, Super+Tab being the inverse)
+bindsym $alt+Tab workspace next
+bindsym $super+Tab workspace prev
+
+
+# Select split mode (Alt+Right changes to horizontal, Alt+Left changes to vertical)
+bindsym $alt+Right splith
+bindsym $alt+Down splitv
+
+
+# Resizing containers (yes, up/right for increase and down/left for decrease, it doesn't depend on the window location, it's weird)
+bindsym $super+Mod1+Left resize shrink width 20px
+bindsym $super+Mod1+Right resize grow width 20px
+bindsym $super+Mod1+Up resize grow height 20px
+bindsym $super+Mod1+Down resize shrink height 20px

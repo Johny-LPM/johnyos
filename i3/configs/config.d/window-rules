@@ -1,0 +1,3 @@
+# Window rules (like turning windows to floating instead of tiling)
+for_window [app_id="pavucontrol"] floating enable
+for_window [app_id="terminator"] floating enable

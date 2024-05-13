@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 cd $(dirname $0)
-./debiansetup.sh "swaysetup.sh"
-
+../UtilityScripts/debiansetup.sh "$(pwd)/swaysetup.sh"
+cd $(dirname $0)
 
 
 # For some reason gnome-tweaks doesn't create a desktop file on its own outside GNOME, so we do it manually
@@ -15,16 +15,14 @@ sudo apt install policykit-1 mate-polkit -y
 
 
 # Login Manager installation (GDM3, because it has better integration with Sway)
-sudo apt install --no-install-recommends gdm3 -y
+#sudo apt install --no-install-recommends gdm3 -y
 
 
 # Sway
-sudo apt install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst grim slurp libnotify-bin libnotify-dev wlr-randr blueman gnome-software gnome-software-plugin-flatpak thunar file-roller -y
+sudo apt install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst grim slurp libnotify-bin libnotify-dev terminator wlr-randr blueman gnome-software gnome-software-plugin-flatpak thunar file-roller -y
 rm $HOME/.config/sway/config
 mkdir -p $HOME/.config/sway
-cp -r ./sway/* $HOME/.config/sway/
-sudo apt remove foot -y
-sudo apt install terminator -y
+cp -r ./configs/* $HOME/.config/sway/
 
 
 # Networking
@@ -33,6 +31,13 @@ sudo apt install wpasupplicant wpagui -y
 
 ## Sway just doesn't seem to work with NVIDIA, regardless of driver version and kernel, on Debian 12.
 ## Therefore, the NVIDIA check and installation script is skipped here. Nouveau is the only option.
+../UtilityScripts/nvidiasetup.sh
+
+
+# Set a few environment variables
+echo "export __GL_GSYNC_ALLOWED=0" >> $HOME/.profile
+echo "export __GL_SYNC_TO_VBLANK=0" >> $HOME/.profile
+echo "export __GL_VRR_ALLOWED=0" >> $HOME/.profile
 
 
 # Final step

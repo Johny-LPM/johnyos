@@ -1,0 +1,14 @@
+# Startup executions, add scripts, applications, etc
+
+# GNOME Policy Kit (don't mess with this)
+exec /usr/libexec/polkit-mate-authentication-agent-1
+
+
+# Fix GTK Issue
+exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
+
+
+# Notifications Daemon (or this probably)
+exec dunst
+
+# Custom (add your entries here)

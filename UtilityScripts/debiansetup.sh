@@ -31,9 +31,10 @@ if [ "$(cat kstat)" == "updated" ]; then
     sleep 5
     rm kstat
     sed -i '$d' $HOME/.bashrc
+
 else
     clear
-    figlet -tc "I'LL UPDATE YOUR SYSTEM NOW, BE READY TO LOGIN!"
+    figlet -tc "I'LL UPDATE YOUR SYSTEM NOW, AFTERWARDS A REBOOT WILL BE NEEDED!"
     sleep 5
     #sudo sed -i 's/bookworm/trixie/g' /etc/apt/sources.list
     #sudo apt update -y
@@ -49,8 +50,8 @@ else
 
     echo "updated">kstat
 
-    # Add the script that launched this one (provided it was launched like so) to autostart
-    echo "$(pwd)/$script" >> $HOME/.bashrc
+    # Add the script that launched this one to autostart
+    echo "$script" >> $HOME/.bashrc
 
     clear
     figlet -tc "TIME TO REBOOT, WHENEVER YOU'RE READY JUST PRESS ENTER!"
@@ -79,7 +80,7 @@ sudo apt install brightnessctl qt5ct qt6ct mesa-utils pciutils unrar unzip synap
 sudo systemctl enable tlp
 
 
-# Aesthetic (set Papirus and Adw-Gtk3 for the GTK theme to look like Libadwaita4)
+# Aesthetic (set Papirus and Adw-Gtk3 for the GTK theme to look like GTK4)
 sudo apt install fonts-recommended fonts-ubuntu fonts-font-awesome fonts-terminus papirus-icon-theme -y
 sudo wget https://github.com/lassekongo83/adw-gtk3/releases/download/v5.3/adw-gtk3v5.3.tar.xz
 sudo tar xvf adw-gtk3v5.3.tar.xz
@@ -93,7 +94,7 @@ gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 
 
 # Fastfetch hehe
-sudo wget https://github.com/fastfetch-cli/fastfetch/releases/download/2.11.0/fastfetch-linux-amd64.deb
+sudo wget https://github.com/fastfetch-cli/fastfetch/releases/download/2.11.5/fastfetch-linux-amd64.deb
 sudo apt install ./fastfetch-linux-amd64.deb -y
 sudo rm fastfetch-linux-amd64.deb
 echo "alias neofetch='fastfetch -c neofetch'" >> $HOME/.bashrc

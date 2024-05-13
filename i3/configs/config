@@ -1,0 +1,30 @@
+# Includes other configuration files, for segregation and ease of reading (best not to touch this)
+#include /etc/i3/config.d/*
+include $HOME/.config/i3/config.d/*
+
+
+# Wallpaper set
+feh $HOME/.config/i3/i3.png fill
+
+
+# Example monitor configuration (obtain names with swaymsg -t get_outputs):
+#output HDMI-A-1 resolution 1920x1080 position 0,0
+#output eDP-1 resolution 1920x1080 position 1920,430
+
+
+# Status Bar (waybar):
+bar {
+    swaybar_command waybar
+}
+
+
+### Idle configuration
+
+exec swayidle -w \
+	timeout 300 'swaylock -f -c 000000' \
+	timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+	before-sleep 'swaylock -f -c 000000'
+
+# This will lock your screen after 300 seconds of inactivity, then turn off
+# your displays after another 300 seconds, and turn your screens back on when
+# resumed. It will also lock your screen before your computer goes to sleep.

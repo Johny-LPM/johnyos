@@ -16,5 +16,6 @@ gnome-extensions enable screenshot-window-sizer@gnome-shell-extensions.gcampax.g
 gnome-extensions enable window-app-switcher-on-active-monitor@NiKnights.com
 gnome-extensions enable blur-my-shell@aunetx
 gnome-extensions enable unblank@sun.wxg@gmail.com
+gnome-extensions enable just-perfection-desktop@just-perfection
 
 rm $HOME/.config/autostart/extensionsenable.desktop
