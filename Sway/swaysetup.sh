@@ -15,7 +15,7 @@ sudo apt install policykit-1 mate-polkit -y
 
 
 # Login Manager installation (GDM3, because it has better integration with Sway)
-#sudo apt install --no-install-recommends gdm3 -y
+sudo apt install --no-install-recommends gdm3 -y
 
 
 # Sway
@@ -30,14 +30,9 @@ sudo apt install wpasupplicant wpagui -y
 
 
 ## Sway just doesn't seem to work with NVIDIA, regardless of driver version and kernel, on Debian 12.
+## Flickering on external monitors always occurs.
 ## Therefore, the NVIDIA check and installation script is skipped here. Nouveau is the only option.
-../UtilityScripts/nvidiasetup.sh
-
-
-# Set a few environment variables
-echo "export __GL_GSYNC_ALLOWED=0" >> $HOME/.profile
-echo "export __GL_SYNC_TO_VBLANK=0" >> $HOME/.profile
-echo "export __GL_VRR_ALLOWED=0" >> $HOME/.profile
+## For any single monitor setups, NVIDIA drivers can be installed manually later.
 
 
 # Final step

@@ -8,8 +8,10 @@ cd $(dirname $0)
 sudo apt install gnome-core alacarte gnome-shell-extension-manager gnome-shell-extension-dashtodock gnome-shell-extension-desktop-icons-ng gnome-shell-extension-bluetooth-quick-connect gnome-shell-extension-appindicator gnome-shell-extension-gsconnect gnome-shell-extension-gsconnect-browsers gnome-shell-extension-caffeine gnome-shell-extension-no-annoyance gnome-shell-extension-panel-osd gnome-shell-extension-tiling-assistant curl wget jq dconf-editor gnome-software gnome-software-plugin-flatpak -y
 sudo apt remove firefox-esr -y
 
+
 # We have to reinstall TLP because GNOME prefers Power-Profiles-Daemon and deletes TLP
 sudo apt install tlp tlp-rdw -y
+
 
 # Use the extensions from the preselected gnome-extensions folder
 gnome-extensions install gnome-extensions/blur-my-shell.zip
@@ -22,9 +24,11 @@ gnome-extensions install gnome-extensions/just-perfection.zip
 gnome-extensions install gnome-extensions/unblank.zip
 gnome-extensions install gnome-extensions/window-switcher.zip
 
+
 # Enable the extensions considered more useful for a new user OOTB
 echo -e "[Desktop Entry]\nName=ExtensionsEnable\nExec=$(pwd)/extensionsenable.sh\nType=Application\nTerminal=false" > $HOME/.config/autostart/extensionsenable.desktop
 sudo chmod +x $HOME/.config/autostart/extensionsenable.desktop
+
 
 # Enable a bunch of settings that make it a better OOTB experience
 gsettings set org.gnome.desktop.peripherals.touchpad tap-to-click true
@@ -34,11 +38,13 @@ gsettings set org.gnome.desktop.wm.preferences button-layout ":minimize,maximize
 gsettings set org.gnome.shell favorite-apps "['floorp.desktop', 'org.gnome.Software.desktop', 'org.gnome.Nautilus.desktop', 'com.mattjakeman.ExtensionManager.desktop', 'org.gnome.tweaks.desktop', 'org.gnome.Settings.desktop']"
 gsettings set org.gnome.settings-daemon.plugins.power power-button-action 'interactive'
 
+
 # NVIDIA Check and Setup
 ../UtilityScripts/nvidiasetup.sh
 # GDM Fix for allowing Wayland sessions on some NVIDIA devices
 sudo mv /usr/lib/udev/rules.d/61-gdm.rules /usr/lib/udev/rules.d/61-gdm.rules.bak
 sudo update-grub2
+
 
 # Final step
 sudo apt autoremove -y
