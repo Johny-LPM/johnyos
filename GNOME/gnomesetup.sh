@@ -8,6 +8,9 @@ cd $(dirname $0)
 sudo apt install gnome-core alacarte gnome-shell-extension-manager gnome-shell-extension-dashtodock gnome-shell-extension-desktop-icons-ng gnome-shell-extension-bluetooth-quick-connect gnome-shell-extension-appindicator gnome-shell-extension-gsconnect gnome-shell-extension-gsconnect-browsers gnome-shell-extension-caffeine gnome-shell-extension-no-annoyance gnome-shell-extension-panel-osd gnome-shell-extension-tiling-assistant curl wget jq dconf-editor gnome-software gnome-software-plugin-flatpak -y
 sudo apt remove firefox-esr -y
 
+# We have to reinstall TLP because GNOME prefers Power-Profiles-Daemon and deletes TLP
+sudo apt install tlp tlp-rdw -y
+
 # Use the extensions from the preselected gnome-extensions folder
 gnome-extensions install gnome-extensions/blur-my-shell.zip
 gnome-extensions install gnome-extensions/compiz.zip
