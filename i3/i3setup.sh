@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 cd $(dirname $0)
 ./debiansetup.sh "swaysetup.sh"
-
+cd $(dirname $0)
+gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"
+gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 
 # For some reason gnome-tweaks doesn't create a desktop file on its own outside GNOME, so we do it manually
 mkdir -p $HOME/.local/share/applications
@@ -32,6 +35,10 @@ sudo apt install wpasupplicant wpagui -y
 # NVIDIA Check and Setup
 ./nvidiasetup.sh
 sudo update-grub2
+
+
+echo "export QT_QPA_PLATFORM=wayland" >> $HOME/.profile
+echo "export QT_QPA_PLATFORMTHEME=qt5ct" >> $HOME/.profile
 
 
 # Final step

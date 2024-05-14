@@ -2,6 +2,9 @@
 cd $(dirname $0)
 ../UtilityScripts/debiansetup.sh "$(pwd)/swaysetup.sh"
 cd $(dirname $0)
+gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"
+gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 
 
 # For some reason gnome-tweaks doesn't create a desktop file on its own outside GNOME, so we do it manually
@@ -33,6 +36,10 @@ sudo apt install wpasupplicant wpagui -y
 ## Flickering on external monitors always occurs.
 ## Therefore, the NVIDIA check and installation script is skipped here. Nouveau is the only option.
 ## For any single monitor setups, NVIDIA drivers can be installed manually later.
+
+
+echo "export QT_QPA_PLATFORM=wayland" >> $HOME/.profile
+echo "export QT_QPA_PLATFORMTHEME=qt5ct" >> $HOME/.profile
 
 
 # Final step

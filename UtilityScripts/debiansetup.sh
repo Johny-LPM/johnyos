@@ -88,9 +88,6 @@ sudo rm adw-gtk3v5.3.tar.xz
 sudo mkdir -p $HOME/.themes
 sudo cp -r adw-gtk* $HOME/.themes
 sudo rm -r adw-gtk*
-gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"
-gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
-gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 
 
 # Fastfetch hehe
@@ -131,5 +128,3 @@ sudo apt autoremove -y
 
 # Set a few environment variables
 echo "export MOZ_ENABLE_WAYLAND=1" >> $HOME/.profile
-echo "export QT_QPA_PLATFORM=wayland" >> $HOME/.profile
-echo "export QT_QPA_PLATFORMTHEME=qt5ct" >> $HOME/.profile

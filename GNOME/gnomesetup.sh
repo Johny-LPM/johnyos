@@ -2,6 +2,9 @@
 cd $(dirname $0)
 ../UtilityScripts/debiansetup.sh "$(pwd)/gnomesetup.sh"
 cd $(dirname $0)
+gsettings set org.gnome.desktop.interface gtk-theme "adw-gtk3-dark"
+gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 
 
 # Install minimal GNOME
@@ -44,6 +47,10 @@ gsettings set org.gnome.settings-daemon.plugins.power power-button-action 'inter
 # GDM Fix for allowing Wayland sessions on some NVIDIA devices
 sudo mv /usr/lib/udev/rules.d/61-gdm.rules /usr/lib/udev/rules.d/61-gdm.rules.bak
 sudo update-grub2
+
+
+echo "export QT_QPA_PLATFORM=wayland" >> $HOME/.profile
+echo "export QT_QPA_PLATFORMTHEME=qt5ct" >> $HOME/.profile
 
 
 # Final step
