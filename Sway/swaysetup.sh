@@ -22,14 +22,25 @@ sudo apt install --no-install-recommends gdm3 -y
 
 
 # Sway
-sudo apt install sway swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst grim slurp libnotify-bin libnotify-dev terminator wlr-randr blueman gnome-software gnome-software-plugin-flatpak thunar file-roller -y
+nix-env -iA nixpkgs.sway
+nix-channel --add https://github.com/nix-community/nixGL/archive/main.tar.gz nixgl && nix-channel --update
+nix-env -iA nixgl.auto.nixGLDefault
+
+
+# Sway addons
+sudo apt install swayidle swaylock xdg-desktop-portal-wlr wofi waybar dunst grim slurp libnotify-bin libnotify-dev terminator wlr-randr blueman gnome-software gnome-software-plugin-flatpak adwaita-qt thunar file-roller -y
 rm $HOME/.config/sway/config
 mkdir -p $HOME/.config/sway
 cp -r ./configs/* $HOME/.config/sway/
 
 
+# NVIDIA Check and Setup
+../UtilityScripts/nvidiasetup.sh
+sudo update-grub2
+
+
 # Networking
-sudo apt install wpasupplicant wpagui -y
+sudo apt install network-manager nm-tray -y
 
 
 ## Sway just doesn't seem to work with NVIDIA, regardless of driver version and kernel, on Debian 12.

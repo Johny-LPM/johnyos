@@ -53,6 +53,9 @@ else
     # Add the script that launched this one to autostart
     echo "$script" >> $HOME/.bashrc
 
+    figlet -tc "I WILL NOW ALSO INSTALL NIXPKGS SUPPORT"
+    curl -L https://nixos.org/nix/install | sh
+
     clear
     figlet -tc "TIME TO REBOOT, WHENEVER YOU'RE READY JUST PRESS ENTER!"
     read nothing
